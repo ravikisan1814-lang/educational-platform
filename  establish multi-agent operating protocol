@@ -1,0 +1,441 @@
+[1mdiff --git a/AGENTS.md b/AGENTS.md[m
+[1mindex e69de29..cdb84de 100644[m
+[1m--- a/AGENTS.md[m
+[1m+++ b/AGENTS.md[m
+[36m@@ -0,0 +1,435 @@[m
+[32m+[m[32m# EDUCATIONAL PLATFORM — AGENT OPERATING PROTOCOL[m
+[32m+[m
+[32m+[m[32m## 1. Project Rule[m
+[32m+[m
+[32m+[m[32mThis repository is developed by multiple AI coding agents.[m
+[32m+[m
+[32m+[m[32mAgents must coordinate through the repository files, Git branches, commits, tests, and documented task status.[m
+[32m+[m
+[32m+[m[32mNo agent may assume another agent's work is correct without verification.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 2. Active Agents[m
+[32m+[m
+[32m+[m[32m### Cline[m
+[32m+[m[32mRole:[m
+[32m+[m[32mFrontend, UI/UX, accessibility, responsive experience.[m
+[32m+[m
+[32m+[m[32mBranch:[m
+[32m+[m[32m`agent/cline`[m
+[32m+[m
+[32m+[m[32mPrimary ownership:[m
+[32m+[m[32m- frontend[m
+[32m+[m[32m- UI components[m
+[32m+[m[32m- layouts[m
+[32m+[m[32m- navigation[m
+[32m+[m[32m- responsive behavior[m
+[32m+[m[32m- accessibility[m
+[32m+[m[32m- visual consistency[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m### OpenCode[m
+[32m+[m[32mRole:[m
+[32m+[m[32mLead systems and backend engineer.[m
+[32m+[m
+[32m+[m[32mBranch:[m
+[32m+[m[32m`agent/opencode`[m
+[32m+[m
+[32m+[m[32mPrimary ownership:[m
+[32m+[m[32m- architecture[m
+[32m+[m[32m- backend[m
+[32m+[m[32m- APIs[m
+[32m+[m[32m- database[m
+[32m+[m[32m- authentication[m
+[32m+[m[32m- authorization[m
+[32m+[m[32m- integrations[m
+[32m+[m[32m- scalability[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m### Aider[m
+[32m+[m[32mRole:[m
+[32m+[m[32mQA, testing, auditing and regression verification.[m
+[32m+[m
+[32m+[m[32mBranch:[m
+[32m+[m[32m`agent/aider`[m
+[32m+[m
+[32m+[m[32mPrimary ownership:[m
+[32m+[m[32m- automated tests[m
+[32m+[m[32m- integration tests[m
+[32m+[m[32m- regression testing[m
+[32m+[m[32m- code audits[m
+[32m+[m[32m- performance checks[m
+[32m+[m[32m- reliability checks[m
+[32m+[m[32m- verification[m
+[32m+[m
+[32m+[m[32mAider must not approve its own unverified changes.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m### Continue[m
+[32m+[m[32mRole:[m
+[32m+[m[32mDocumentation and codebase intelligence.[m
+[32m+[m
+[32m+[m[32mBranch:[m
+[32m+[m[32m`agent/continue`[m
+[32m+[m
+[32m+[m[32mPrimary ownership:[m
+[32m+[m[32m- documentation[m
+[32m+[m[32m- developer knowledge[m
+[32m+[m[32m- architecture documentation[m
+[32m+[m[32m- API documentation[m
+[32m+[m[32m- project guides[m
+[32m+[m[32m- consistency checks between documentation and implementation[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m### Roo Code[m
+[32m+[m[32mRole:[m
+[32m+[m[32mSecurity, DevOps and integration specialist.[m
+[32m+[m
+[32m+[m[32mBranch:[m
+[32m+[m[32m`agent/roo-code`[m
+[32m+[m
+[32m+[m[32mPrimary ownership:[m
+[32m+[m[32m- security[m
+[32m+[m[32m- deployment[m
+[32m+[m[32m- infrastructure[m
+[32m+[m[32m- environment configuration[m
+[32m+[m[32m- CI/CD[m
+[32m+[m[32m- integration audits[m
+[32m+[m[32m- production-readiness checks[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 3. Universal Rules[m
+[32m+[m
+[32m+[m[32mEvery agent MUST:[m
+[32m+[m
+[32m+[m[32m1. Read `AGENTS.md` before modifying the project.[m
+[32m+[m[32m2. Read the relevant project documentation before starting a task.[m
+[32m+[m[32m3. Check `TASKS.md` before taking work.[m
+[32m+[m[32m4. Check `AGENT_STATUS.md` before modifying shared systems.[m
+[32m+[m[32m5. Never overwrite another agent's uncommitted work.[m
+[32m+[m[32m6. Work only from its assigned branch/worktree.[m
+[32m+[m[32m7. Keep changes focused on the assigned task.[m
+[32m+[m[32m8. Run appropriate tests before declaring completion.[m
+[32m+[m[32m9. Update relevant documentation when behavior changes.[m
+[32m+[m[32m10. Update `AGENT_STATUS.md` when beginning and completing substantial work.[m
+[32m+[m[32m11. Update `CHANGELOG.md` for meaningful project changes.[m
+[32m+[m[32m12. Record important architectural decisions in `DECISIONS.md`.[m
+[32m+[m[32m13. Never commit secrets, API keys, passwords, tokens, or private credentials.[m
+[32m+[m[32m14. Never hard-code production credentials.[m
+[32m+[m[32m15. Never silently change another agent's ownership area.[m
+[32m+[m[32m16. Never claim a task is complete when tests or required verification are failing.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 4. Shared Knowledge[m
+[32m+[m
+[32m+[m[32mThe following files are the project's shared memory:[m
+[32m+[m
+[32m+[m[32m- `PROJECT_SPEC.md`[m
+[32m+[m[32m- `ARCHITECTURE.md`[m
+[32m+[m[32m- `TASKS.md`[m
+[32m+[m[32m- `AGENT_STATUS.md`[m
+[32m+[m[32m- `DECISIONS.md`[m
+[32m+[m[32m- `CHANGELOG.md`[m
+[32m+[m[32m- `CONTRIBUTING.md`[m
+[32m+[m[32m- `SECURITY.md`[m
+[32m+[m[32m- `TESTING.md`[m
+[32m+[m[32m- `DEPLOYMENT.md`[m
+[32m+[m
+[32m+[m[32mAgents must treat these files as authoritative project coordination documents.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 5. Task Protocol[m
+[32m+[m
+[32m+[m[32mBefore starting work:[m
+[32m+[m
+[32m+[m[32m1. Read the task.[m
+[32m+[m[32m2. Check dependencies.[m
+[32m+[m[32m3. Check whether another agent is modifying the same area.[m
+[32m+[m[32m4. Record ownership/status.[m
+[32m+[m[32m5. Implement the task.[m
+[32m+[m[32m6. Test the implementation.[m
+[32m+[m[32m7. Document relevant changes.[m
+[32m+[m[32m8. Commit the work.[m
+[32m+[m[32m9. Mark the task ready for verification.[m
+[32m+[m
+[32m+[m[32mA completed task is NOT automatically considered verified.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 6. Verification Protocol[m
+[32m+[m
+[32m+[m[32mWhen an agent completes a task requiring verification:[m
+[32m+[m
+[32m+[m[32m1. The assigned verifier must inspect the changes.[m
+[32m+[m[32m2. The verifier must run relevant tests.[m
+[32m+[m[32m3. The verifier must check for regressions.[m
+[32m+[m[32m4. The verifier must record PASS or FAIL.[m
+[32m+[m[32m5. If FAIL, the original owner must correct the issue.[m
+[32m+[m[32m6. Verification must be repeated after corrections.[m
+[32m+[m
+[32m+[m[32mRequired default verification:[m
+[32m+[m
+[32m+[m[32m- Cline → Aider[m
+[32m+[m[32m- OpenCode → Aider[m
+[32m+[m[32m- Continue → relevant owning agent[m
+[32m+[m[32m- Roo Code → Aider[m
+[32m+[m[32m- Aider → another appropriate agent[m
+[32m+[m
+[32m+[m[32mNo agent may be the sole authority approving its own critical work.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 7. Git Rules[m
+[32m+[m
+[32m+[m[32mAgents must:[m
+[32m+[m
+[32m+[m[32m- work only on their assigned branch;[m
+[32m+[m[32m- make small, descriptive commits;[m
+[32m+[m[32m- never force-push;[m
+[32m+[m[32m- never rewrite shared history;[m
+[32m+[m[32m- never commit directly to `main`;[m
+[32m+[m[32m- never merge their own critical work without required verification;[m
+[32m+[m[32m- pull/rebase only when safe and documented;[m
+[32m+[m[32m- resolve conflicts carefully;[m
+[32m+[m[32m- preserve another agent's valid work.[m
+[32m+[m
+[32m+[m[32m`main` represents the stable integration branch.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 8. Main Branch Protection[m
+[32m+[m
+[32m+[m[32m`main` must contain only tested, reviewed and integration-ready work.[m
+[32m+[m
+[32m+[m[32mAgents should never directly develop features on `main`.[m
+[32m+[m
+[32m+[m[32mChanges reach `main` through controlled integration after verification.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 9. Ownership Boundaries[m
+[32m+[m
+[32m+[m[32mOwnership is guidance, not permission to ignore dependencies.[m
+[32m+[m
+[32m+[m[32mAgents may inspect any part of the repository.[m
+[32m+[m
+[32m+[m[32mBefore modifying another agent's primary ownership area:[m
+[32m+[m
+[32m+[m[32m1. document why;[m
+[32m+[m[32m2. coordinate through `TASKS.md` / `AGENT_STATUS.md`;[m
+[32m+[m[32m3. avoid unnecessary duplication;[m
+[32m+[m[32m4. preserve existing contracts;[m
+[32m+[m[32m5. notify the owning agent through the project coordination files.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 10. Architecture Principles[m
+[32m+[m
+[32m+[m[32mThe educational platform must be designed for:[m
+[32m+[m
+[32m+[m[32m- scalability;[m
+[32m+[m[32m- maintainability;[m
+[32m+[m[32m- modularity;[m
+[32m+[m[32m- security;[m
+[32m+[m[32m- accessibility;[m
+[32m+[m[32m- responsive design;[m
+[32m+[m[32m- large content volumes;[m
+[32m+[m[32m- future educational sections;[m
+[32m+[m[32m- configurable permissions;[m
+[32m+[m[32m- API-driven AI integration;[m
+[32m+[m[32m- provider independence;[m
+[32m+[m[32m- low infrastructure cost;[m
+[32m+[m[32m- easy migration;[m
+[32m+[m[32m- reliable backups;[m
+[32m+[m[32m- observability;[m
+[32m+[m[32m- automated testing.[m
+[32m+[m
+[32m+[m[32mDo not hard-code assumptions that prevent future expansion.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 11. Content Architecture[m
+[32m+[m
+[32m+[m[32mEducational content must be data-driven.[m
+[32m+[m
+[32m+[m[32mDo not hard-code every class, subject, chapter or section into frontend source code.[m
+[32m+[m
+[32m+[m[32mThe system must allow future administrators/owners to add:[m
+[32m+[m
+[32m+[m[32m- educational sections;[m
+[32m+[m[32m- classes;[m
+[32m+[m[32m- subjects;[m
+[32m+[m[32m- topics;[m
+[32m+[m[32m- chapters;[m
+[32m+[m[32m- categories;[m
+[32m+[m[32m- content types;[m
+[32m+[m[32m- access rules.[m
+[32m+[m
+[32m+[m[32mwithout rebuilding the entire application.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 12. Access Control[m
+[32m+[m
+[32m+[m[32mThe platform will support configurable access levels.[m
+[32m+[m
+[32m+[m[32mInitial levels:[m
+[32m+[m
+[32m+[m[32m### Level 1 — Owner / Premium[m
+[32m+[m[32m100% access.[m
+[32m+[m
+[32m+[m[32m### Level 2 — Member[m
+[32m+[m[32mApproximately 50% of available content according to configured access rules.[m
+[32m+[m
+[32m+[m[32m### Level 3 — Co-member[m
+[32m+[m[32mApproximately 25% according to configured access rules.[m
+[32m+[m
+[32m+[m[32m### Level 4 — Public[m
+[32m+[m[32mPublicly available content only.[m
+[32m+[m
+[32m+[m[32mThe exact access percentage must NOT be implemented as unsafe frontend-only logic.[m
+[32m+[m
+[32m+[m[32mAuthorization must ultimately be enforced server-side.[m
+[32m+[m
+[32m+[m[32mLocked content may be visible in the catalog, but unauthorized protected content must remain protected.[m
+[32m+[m
+[32m+[m[32mWhere appropriate, locked content displays:[m
+[32m+[m
+[32m+[m[32m- 🔒 Access it[m
+[32m+[m[32m- Contact with owner[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 13. Security[m
+[32m+[m
+[32m+[m[32mSecurity takes priority over convenience.[m
+[32m+[m
+[32m+[m[32mNever trust:[m
+[32m+[m
+[32m+[m[32m- frontend role values;[m
+[32m+[m[32m- client-side permissions;[m
+[32m+[m[32m- URL parameters;[m
+[32m+[m[32m- hidden UI elements;[m
+[32m+[m[32m- local storage values;[m
+[32m+[m[32m- client-provided ownership claims.[m
+[32m+[m
+[32m+[m[32mServer-side authorization must determine access to protected resources.[m
+[32m+[m
+[32m+[m[32mSecrets belong in environment variables or secure secret storage.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 14. AI Integration[m
+[32m+[m
+[32m+[m[32mAI functionality must be provider-independent where practical.[m
+[32m+[m
+[32m+[m[32mDo not hard-code one AI provider into the entire architecture.[m
+[32m+[m
+[32m+[m[32mAI integrations should use an abstraction layer so providers/models can be replaced later.[m
+[32m+[m
+[32m+[m[32mAPI keys must never be committed.[m
+[32m+[m
+[32m+[m[32mThe application must continue functioning safely when an AI provider is unavailable.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 15. Scalability[m
+[32m+[m
+[32m+[m[32mThe architecture must avoid unnecessary coupling.[m
+[32m+[m
+[32m+[m[32mPrefer:[m
+[32m+[m
+[32m+[m[32m- modular services;[m
+[32m+[m[32m- indexed database queries;[m
+[32m+[m[32m- pagination;[m
+[32m+[m[32m- lazy loading;[m
+[32m+[m[32m- caching where appropriate;[m
+[32m+[m[32m- asynchronous processing where appropriate;[m
+[32m+[m[32m- object/file storage for large files;[m
+[32m+[m[32m- separation of application data and uploaded files;[m
+[32m+[m[32m- database migrations;[m
+[32m+[m[32m- reusable components;[m
+[32m+[m[32m- API versioning where appropriate.[m
+[32m+[m
+[32m+[m[32mNever load an entire large content library into the browser unnecessarily.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 16. Quality Gate[m
+[32m+[m
+[32m+[m[32mBefore a task is considered complete:[m
+[32m+[m
+[32m+[m[32m- implementation works;[m
+[32m+[m[32m- relevant tests pass;[m
+[32m+[m[32m- build passes;[m
+[32m+[m[32m- no obvious console errors remain;[m
+[32m+[m[32m- no secrets are exposed;[m
+[32m+[m[32m- documentation is updated when necessary;[m
+[32m+[m[32m- accessibility is considered;[m
+[32m+[m[32m- responsive behavior is considered;[m
+[32m+[m[32m- performance impact is considered;[m
+[32m+[m[32m- required verification is complete.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 17. Conflict Rule[m
+[32m+[m
+[32m+[m[32mIf two agents modify the same file:[m
+[32m+[m
+[32m+[m[32m1. stop and inspect the changes;[m
+[32m+[m[32m2. do not blindly overwrite;[m
+[32m+[m[32m3. preserve valid work from both sides where possible;[m
+[32m+[m[32m4. resolve the conflict deliberately;[m
+[32m+[m[32m5. run tests afterward;[m
+[32m+[m[32m6. document significant resolution decisions.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 18. New Agent Registration[m
+[32m+[m
+[32m+[m[32mA new agent may be added only after registering:[m
+[32m+[m
+[32m+[m[32m- name;[m
+[32m+[m[32m- role;[m
+[32m+[m[32m- branch;[m
+[32m+[m[32m- workspace;[m
+[32m+[m[32m- ownership;[m
+[32m+[m[32m- responsibilities;[m
+[32m+[m[32m- restrictions;[m
+[32m+[m[32m- verification responsibilities.[m
+[32m+[m
+[32m+[m[32mThe new agent must read this file and all relevant project documentation before making changes.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 19. No Guessing Rule[m
+[32m+[m
+[32m+[m[32mIf requirements are ambiguous, an agent must not invent critical business rules.[m
+[32m+[m
+[32m+[m[32mIt must:[m
+[32m+[m
+[32m+[m[32m1. inspect existing specifications;[m
+[32m+[m[32m2. inspect architecture decisions;[m
+[32m+[m[32m3. document the ambiguity;[m
+[32m+[m[32m4. choose the safest reversible option when possible;[m
+[32m+[m[32m5. record the decision.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m## 20. Completion Rule[m
+[32m+[m
+[32m+[m[32m"Code written" does not mean "task completed."[m
+[32m+[m
+[32m+[m[32mCompletion means:[m
+[32m+[m
+[32m+[m[32mIMPLEMENTED → TESTED → VERIFIED → DOCUMENTED → COMMITTED[m
+[32m+[m
+[32m+[m[32mOnly then should a task be marked complete.[m
+\ No newline at end of file[m
