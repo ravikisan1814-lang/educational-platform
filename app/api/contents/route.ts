@@ -6,6 +6,62 @@ import type { AccessLevel, ContentListItem } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Demo fallback used when Supabase env vars are not configured yet
+ * (e.g. a fresh Vercel deployment before env setup). Lets the catalog
+ * render immediately and keeps the API from returning a 500.
+ */
+const DEMO_ITEMS: ContentListItem[] = [
+  {
+    id: "demo-locked-1",
+    category_id: "c1",
+    category_slug: "class-11",
+    category_name: "Class 11",
+    is_locked: true,
+    required_access_level: 2,
+    title: null,
+    description: null,
+    masked_title: "Locked content (Member tier)",
+    owner_contact: null,
+  },
+  {
+    id: "demo-locked-2",
+    category_id: "c2",
+    category_slug: "class-12",
+    category_name: "Class 12",
+    is_locked: true,
+    required_access_level: 3,
+    title: null,
+    description: null,
+    masked_title: "Locked content (Co-member tier)",
+    owner_contact: null,
+  },
+  {
+    id: "demo-open-1",
+    category_id: "c3",
+    category_slug: "general-knowledge",
+    category_name: "General Knowledge",
+    is_locked: false,
+    required_access_level: 4,
+    title: "Free GK samples",
+    description: "Open sample questions for everyone.",
+    masked_title: null,
+    owner_contact: null,
+  },
+  {
+    id: "demo-open-2",
+    category_id: "c4",
+    category_slug: "loksewa-knowledge",
+    category_name: "Loksewa Knowledge",
+    is_locked: false,
+    required_access_level: 4,
+    title: "Loksewa basics",
+    description: "Introductory material, publicly available.",
+    masked_title: null,
+    owner_contact: null,
+  },
+];
+
 interface ContentRow {
   id: string;
   category_id: string;
@@ -30,7 +86,19 @@ interface ContentRow {
  * Query params: ?category=<category slug> to filter.
  */
 export async function GET(request: NextRequest) {
-  const supabase = await createClient();
+  let supabase;
+  try {
+    supabase = await createClient();
+  } catch {
+    // Supabase env vars not configured — serve demo data so the catalog
+    // still renders. Real data flows in once env vars are set.
+    return NextResponse.json({
+      data: DEMO_ITEMS,
+      user_access_level: 4,
+      access_level_label: ACCESS_LEVEL_LABELS[4],
+      demo: true,
+    });
+  }
 
   const { data: { user } } = await supabase.auth.getUser();
 

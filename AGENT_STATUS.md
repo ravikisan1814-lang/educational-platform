@@ -25,6 +25,8 @@ Last updated: 2026-08-12
 | `lucide-react` added to dependencies (task requirement) | Done |
 | Security: purged dangling secret commit `6beb1b56` (Supabase key in `.env.local`) blocked by GitHub push protection | Done |
 | Security: incident logged in `SECURITY.md`; `.env.local` confirmed gitignored & absent | Done |
+| Home page (`/`) permanent redirect to `/catalog` via `next/navigation` `redirect()` | Done |
+| Vercel "No Next.js version detected": app code committed (`ccd7fe4`) + merged to `main` (`e359c6e`) and pushed to `origin/main` | Done |
 | Verification: tsc, build, `npx playwright test` (72/72) | Done — all pass |
 
 ### History
