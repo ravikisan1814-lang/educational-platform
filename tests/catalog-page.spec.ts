@@ -82,14 +82,18 @@ test.describe("Catalog page — shared", () => {
     await page.goto("/catalog");
   });
 
-  test("renders the catalog hero and access-tier legend", async ({ page }) => {
+  test("renders the catalog hero without exposing internal access tiers", async ({
+    page,
+  }) => {
     await expect(
       page.getByRole("heading", { name: "Content Catalog" })
     ).toBeVisible();
 
-    // Legend shows all four tier labels
+    // Internal access tiers (Owner/Member/Co-member/Public) are not shown
+    // to external users.
+    await expect(page.locator(".tier-legend")).toHaveCount(0);
     for (const label of ["Owner", "Member", "Co-member", "Public"]) {
-      await expect(page.locator(".tier-legend")).toContainText(label);
+      await expect(page.getByText(label)).toHaveCount(0);
     }
   });
 

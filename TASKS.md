@@ -67,7 +67,42 @@ Deliverables:
 3. `npx playwright test` — 72/72 pass.
 4. Visit `/catalog` — locked cards show both "Access it" and "Contact with owner" buttons plus a masked file URL; raw `storage.example.com` URLs never appear.
 
+## Content migration + Netlify deployment — COMPLETE (opencode, 2026-08-12)
+
+Deliverables:
+- `scripts/migrate-content.mjs` — imports 135 JSON files from `../ravikishan/migrated-content` into the Supabase hierarchy (exam_groups → subjects → chapters → sub_chapters → topics → content_items). Idempotent via upserts on unique constraints.
+- `netlify.toml` — Netlify deployment config (Next.js 15 App Router, Node 22, redirects for `/catalog/*`, `/learn/*`, `/api/*`).
+- `@netlify/plugin-nextjs` added as devDependency.
+- `package.json` — added `migrate:content` script.
+- Deployment switched from Vercel to Netlify.
+
+**To run the migration:**
+1. Copy `.env.example` → `.env.local` with real Supabase values.
+2. `npm run migrate:content` (or `node scripts/migrate-content.mjs`).
+3. Optionally set `MIGRATE_SOURCE_DIR` to override the source directory.
+
+**To deploy on Netlify:**
+1. Connect the GitHub repo to Netlify.
+2. Set build command `npm run build`, publish directory `.next`.
+3. Add env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`.
+
+## Site live on Netlify + header/footer polish + PRO AI BUILD prompt — COMPLETE (opencode, 2026-08-12)
+
+Deliverables:
+- Footer moved to home page only — removed `SiteFooter` from `app/catalog/layout.tsx`.
+- Header: removed "Catalog" nav link; added quick-access icons — notifications (with badge), saved items, avatar/profile dropdown, and "Upgrade to Premium" gold pill (`components/SiteHeader.tsx` + CSS in `app/globals.css`).
+- Footer nav: replaced "Catalog" link with "Learn" (`components/SiteFooter.tsx`).
+- PRO AI BUILD PROMPT saved as `prompts/pro-ai-build.md` — reusable premium dashboard build spec for Cline/Kilo Code (Vite + React + TS + Tailwind + Framer Motion).
+
+**Verification steps:**
+1. `npx tsc --noEmit` — passes.
+2. `npm run lint` — passes.
+3. `npm run build` — passes.
+4. Visit `/` — footer present only on home page; header shows quick-access icons and no "Catalog" nav link.
+5. Visit `/catalog` — no footer, header quick-access persists.
+
 ## Open follow-ups
 - Content ingestion/CRUD (owner admin UI).
 - Tier upgrade flow (update `users.access_level`).
 - Seed demo contents with real `body_markdown`.
+- Run the PRO AI BUILD PROMPT (`prompts/pro-ai-build.md`) in Cline/Kilo Code on a fresh Vite project for the premium dashboard.

@@ -1,0 +1,36 @@
+# Netlify deployment configuration for the educational platform
+# Next.js 15 App Router with Supabase backend
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Next.js on Netlify — use the Netlify Next.js plugin
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Redirects for Next.js App Router dynamic routes
+[[redirects]]
+  from = "/catalog/*"
+  to = "/catalog/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/learn/*"
+  to = "/learn/:splat"
+  status = 200
+
+# API routes
+[[redirects]]
+  from = "/api/*"
+  to = "/api/:splat"
+  status = 200
+
+# SPA fallback for client-side routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

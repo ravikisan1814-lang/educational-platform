@@ -2,36 +2,38 @@
 
 Last updated: 2026-08-12
 
-## Current Agent: opencode (backend + frontend QA/E2E)
+## Primary Agent: opencode
 
-> Aider has been removed from the project. opencode now owns Aider's
-> responsibilities (frontend) in addition to backend and QA/E2E.
+### Supported Development Tools
+- **Cline** — supported development tool
+- **opencode** — primary AI agent for development
+- **Kilo code** — supported development tool
+- **Local tools** — Ollama and other local LLM providers
 
-### Status: SUPABASE CLIENT SPLIT + CATALOG PAGE + FILE_URL MASKING COMPLETE
+### Removed Tools
+- Aider (removed 2026-08-12)
+- continue dev (removed 2026-08-12)
+- roo code (removed 2026-08-12)
+- Devin desktop (removed 2026-08-12)
+
+### Status: SITE IS LIVE ON NETLIFY — AGENT MIGRATION + PENDING CHANGES READY
 
 ### Tasks (this session)
 | Task | Status |
 | --- | --- |
-| `lib/supabase/client.ts` — browser-side Supabase client (createBrowserClient) | Done |
-| `lib/supabase/server.ts` — server-side Supabase client (createServerClient) | Done |
-| `lib/supabase.ts` — backward-compatible re-export of server client | Done |
-| `ContentListItem.file_url` type added for frontend masking defense-in-depth | Done |
-| `ContentCard` — masks raw `file_url` on locked cards (never renders raw URL) | Done |
-| `app/catalog/page.tsx` — primary catalog page with Access Tiers 1-4 legend | Done |
-| `SiteHeader` — added Catalog nav link | Done |
-| `ContentGrid` fallback data includes `file_url` to prove masking works | Done |
-| `tests/catalog-page.spec.ts` — 7 new E2E tests (shared/desktop/mobile) | Done |
-| `tests/content-card.spec.ts` — 2 new E2E tests for file_url masking | Done |
-| `lucide-react` added to dependencies (task requirement) | Done |
-| Security: purged dangling secret commit `6beb1b56` (Supabase key in `.env.local`) blocked by GitHub push protection | Done |
-| Security: incident logged in `SECURITY.md`; `.env.local` confirmed gitignored & absent | Done |
-| Home page (`/`) permanent redirect to `/catalog` via `next/navigation` `redirect()` | Done |
-| Vercel "No Next.js version detected": app code committed (`ccd7fe4`) + merged to `main` (`e359c6e`) and pushed to `origin/main` | Done |
-| Verification: tsc, build, `npx playwright test` (72/72) | Done — all pass |
+| `scripts/migrate-content.mjs` — imports 135 JSON files from `../ravikishan/migrated-content` into Supabase hierarchy (exam_groups → subjects → chapters → sub_chapters → topics → content_items) | Done |
+| `netlify.toml` — Netlify deployment config (Next.js 15 App Router, Node 22, redirects) | Done |
+| `@netlify/plugin-nextjs` added as devDependency | Done |
+| `package.json` — added `migrate:content` script | Done |
+| Deployment switched from Vercel to Netlify | Done |
+| Footer moved to home page only (removed from catalog layout) | Done |
+| Header: removed "Catalog" nav link; added quick-access icons (notifications, saved, profile, upgrade-to-premium pill) | Done |
+| PRO AI BUILD PROMPT saved as `prompts/pro-ai-build.md` for Cline/Kilo Code | Done |
+| Site is live on Netlify and verified | Done |
 
 ### History
 - (2026-08-11) Backend foundation delivered (migrations, RLS, API routes, AI abstraction). All verification passing.
-- (2026-08-11) Aider removed from project; opencode takes over frontend + QA responsibilities.
+- (2026-08-11) Aider removed; opencode takes over frontend + QA responsibilities.
 - (2026-08-11) Frontend + Playwright E2E delivered: 45 tests green across desktop/tablet/mobile.
 - (2026-08-11) Schema refactored to canonical names: `profiles` (id, email, role, access_level) and `educational_content` (id, title, description, file_url, access_level 1-4, owner_contact). RLS recreated: Public (4) and anonymous users cannot query raw L1-3 content. Vitest suite added (`npm test`, 15 tests) covering the full access matrix.
 - (2026-08-12) Supabase client split into `lib/supabase/client.ts` (browser) and `lib/supabase/server.ts` (server). Catalog page at `/catalog` with Access Tiers 1-4 legend. Locked cards mask raw `file_url` on the frontend (defense-in-depth; RLS is the real gate). Playwright suite expanded to 72 tests, all green.
