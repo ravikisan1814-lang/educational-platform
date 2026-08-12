@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-08-12 — Site live on Netlify + header/footer polish + PRO AI BUILD prompt
+- Footer moved to home page only (removed from `/catalog` layout).
+- Header: removed "Catalog" nav link; added quick-access icons (notifications with badge, saved items, avatar profile dropdown, "Upgrade to Premium" gold pill).
+- PRO AI BUILD PROMPT saved as `prompts/pro-ai-build.md` for Cline/Kilo Code premium dashboard build.
+- Site deployed and live on Netlify.
+
+## 2026-08-12 — Development tools migration
+- Migrated from Aider to Kilo code.
+- Removed continue dev, roo code, and Devin desktop tool references.
+- Added Cline as a supported development tool.
+- Updated AGENTS.md and AGENT_STATUS.md with the current three agents: Cline, opencode, Kilo code.
+
 ## 2026-08-11 — Schema refactor + Vitest
 - Migration `0003`: `users`→`profiles` (+`role`), `contents`→`educational_content` (+`owner_contact`, `required_access_level`→`access_level`); RLS recreated under new names. Public (4)/anon cannot query raw L1-3 content.
 - Access logic extracted to `lib/access.ts` (mirrors the RLS predicate); API routes now use it.

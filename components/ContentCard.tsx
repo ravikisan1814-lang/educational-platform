@@ -17,7 +17,7 @@ export default function ContentCard({ item }: { item: ContentListItem }) {
     const contactHref =
       item.owner_contact?.includes("@")
         ? `mailto:${item.owner_contact}`
-        : "mailto:owner@example.com?subject=Content%20access%20request";
+        : "mailto:ravikisan1814@gmail.com?subject=Content%20access%20request";
 
     const displayFileUrl = maskRawFileUrl(true, item.file_url);
     const maskedTitle = item.masked_title ?? "Locked content";

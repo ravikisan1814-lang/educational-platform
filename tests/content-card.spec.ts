@@ -69,7 +69,7 @@ test.beforeEach(async ({ page }) => {
       body: JSON.stringify(MOCK_CONTENTS),
     })
   );
-  await page.goto("/");
+  await page.goto("/catalog");
 });
 
 test("locked cards display both 'Access it' and 'Contact with owner' buttons", async ({

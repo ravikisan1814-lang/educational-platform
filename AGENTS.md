@@ -1,11 +1,12 @@
-# AGENTS.md — Agent working agreement
+# AGENTS.md — Development tools agreement
 
-This repo is built by multiple AI agents (opencode, Aider). Follow these rules.
+This repo is developed by opencode with support for Cline, Kilo code, and local development tools (Ollama, etc.). Follow these rules.
 
 ## Ground rules
-- Read this file and AGENT_STATUS.md first. Record what you start/finish in AGENT_STATUS.md.
-- When your work is ready for another agent to verify, announce it in TASKS.md with exact steps.
+- Read this file and AGENT_STATUS.md first. Update AGENT_STATUS.md with progress.
+- When work is complete, document verification steps in TASKS.md.
 - Record non-trivial decisions in DECISIONS.md, security posture changes in SECURITY.md, layout changes in ARCHITECTURE.md.
+- Supported development tools: Cline, opencode, Kilo code, VS Code, Ollama (local LLMs).
 
 ## Stack & conventions
 - Next.js 15 App Router, TypeScript strict, ESLint (`eslint .`), paths alias `@/*` → project root.
