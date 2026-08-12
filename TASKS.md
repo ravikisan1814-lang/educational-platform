@@ -67,6 +67,31 @@ Deliverables:
 3. `npx playwright test` — 72/72 pass.
 4. Visit `/catalog` — locked cards show both "Access it" and "Contact with owner" buttons plus a masked file URL; raw `storage.example.com` URLs never appear.
 
+## Chat page + Mistral provider + bugfixes — COMPLETE (opencode, 2026-08-12)
+
+`npx playwright test` = **72/72 passing** across desktop/tablet/mobile.
+
+Deliverables:
+- `app/chat/page.tsx` + `components/ChatInterface.tsx` — AI chat UI at `/chat` with provider
+  selector (Mistral/Gemini/Groq), message history, loading and error states.
+- `lib/ai/providers/mistral.ts` — Mistral provider (`MISTRAL_API_KEY`, default model
+  `mistral-large-latest`), registered in `lib/ai` registry + `lib/ai/types.ts`.
+- `.env.example` — documented `MISTRAL_API_KEY`; `components/SiteHeader.tsx` — Chat nav link;
+  `app/globals.css` — chat styles (light/dark).
+
+Bugs found & fixed:
+- `tests/responsive-layout.spec.ts:69` — assertion expected the old home-page hero
+  ("educational content"), but `/` now permanently redirects to `/catalog` (hero:
+  "Content Catalog"). Was failing on all 3 viewports; updated to match the redirect.
+- `components/ChatInterface.tsx` — assistant message badges displayed the currently
+  selected provider instead of the provider that generated the message (mislabeling
+  after switching providers mid-conversation); each assistant message now stores its
+  own `provider`. Removed emoji glyphs from provider `<option>` labels.
+
+**Verification steps:**
+1. `npx tsc --noEmit` — passes. 2. `npm run lint` — passes. 3. `npm run build` — passes.
+4. `npm test` — 15/15. 5. `npx playwright test` — 72/72.
+
 ## Open follow-ups
 - Content ingestion/CRUD (owner admin UI).
 - Tier upgrade flow (update `users.access_level`).

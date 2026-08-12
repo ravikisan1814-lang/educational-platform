@@ -66,7 +66,7 @@ test("header, hero, grid and footer render on every viewport", async ({
   page,
 }) => {
   await expect(page.locator(".site-header")).toBeVisible();
-  await expect(page.getByRole("heading", { name: /educational content/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /content catalog/i })).toBeVisible();
   await expect(page.locator(".content-section").first()).toBeVisible();
   await expect(page.locator(".site-footer")).toBeVisible();
   await expect(page.getByText("EduPlatform")).toBeVisible();

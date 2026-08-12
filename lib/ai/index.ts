@@ -2,6 +2,7 @@ import type { AIGenerateRequest, AIGenerateResponse, AIProvider, AIProviderName 
 import { AIProviderError } from "./errors";
 import { geminiProvider } from "./providers/gemini";
 import { groqProvider } from "./providers/groq";
+import { mistralProvider } from "./providers/mistral";
 
 export * from "./types";
 export * from "./errors";
@@ -10,6 +11,7 @@ export * from "./errors";
 export const AI_PROVIDERS: Record<AIProviderName, AIProvider> = {
   gemini: geminiProvider,
   groq: groqProvider,
+  mistral: mistralProvider,
 };
 
 export const AI_PROVIDER_NAMES = Object.keys(AI_PROVIDERS) as AIProviderName[];

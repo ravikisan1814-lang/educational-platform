@@ -29,7 +29,7 @@ function toGeminiMessages(messages: AIChatMessage[]) {
 
 export const geminiProvider: AIProvider = {
   name: "gemini",
-  defaultModel: "gemini-2.0-flash",
+  defaultModel: "gemini-2.5-pro",
 
   async generate(request: AIGenerateRequest): Promise<AIGenerateResponse> {
     const apiKey = process.env.GEMINI_API_KEY;

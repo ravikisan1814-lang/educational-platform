@@ -7,6 +7,7 @@ import ThemeToggle from "./ThemeToggle";
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/catalog", label: "Catalog" },
+  { href: "/chat", label: "Chat" },
   { href: "/#contents", label: "Contents" },
   { href: "/#upgrade", label: "Pricing" },
   { href: "/#contact", label: "Contact" },
