@@ -112,6 +112,14 @@ export interface ContentItemDetail {
   public_teaser: string;
   variant_labels: string[];
   is_locked: boolean;
+  /**
+   * Notes-architecture block metadata (public — drives the block-type
+   * styling and the 11-section render order; never contains the 90%).
+   */
+  block_type: string | null;
+  section_index: number | null;
+  note_type: number | null;
+  metadata: Record<string, unknown> | null;
   /** Only present when the requester's tier passes; otherwise null (never leaked). */
   locked_payload: string | null;
   /** Only present when the requester's tier passes; otherwise null (never leaked). */

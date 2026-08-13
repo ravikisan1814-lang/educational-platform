@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ContentGrid from "@/components/ContentGrid";
 import { createClient } from "@/lib/supabase";
 import type { ExamGroupNode } from "@/lib/types";
 
@@ -62,8 +63,8 @@ export default async function CatalogPage() {
         <section className="catalog-empty content-section">
           <h2>No content available yet</h2>
           <p className="catalog-empty-text">
-            The catalog is being populated. Check back soon or contact the owner
-            to learn more.
+            The catalog is being populated. Check back soon or reach out to
+            learn more.
           </p>
           <Link href="/" className="btn btn-primary">
             Return home
@@ -121,15 +122,20 @@ export default async function CatalogPage() {
         </>
       )}
 
+      <section className="content-section">
+        <h2>Contents</h2>
+        <ContentGrid />
+      </section>
+
       <section id="upgrade" className="content-section cta-section">
         <h2>Unlock more</h2>
         <p>
-          Get access to premium notes. Contact the owner to upgrade your access
-          tier and unlock the full content library.
+          Get access to premium notes. Reach out to upgrade your access tier
+          and unlock the full content library.
         </p>
         <div className="hero-actions">
           <a href="mailto:ravikisan1814@gmail.com" className="btn btn-primary btn-lg">
-            Contact owner
+            Contact us
           </a>
           <Link href="/" className="btn btn-secondary btn-lg">
             Learn more

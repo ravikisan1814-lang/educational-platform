@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ACCESS_LEVEL_LABELS } from "@/lib/types";
 import type { ContentListItem } from "@/lib/types";
 
 /**
@@ -20,7 +19,10 @@ export default function ContentCard({ item }: { item: ContentListItem }) {
         : "mailto:ravikisan1814@gmail.com?subject=Content%20access%20request";
 
     const displayFileUrl = maskRawFileUrl(true, item.file_url);
-    const maskedTitle = item.masked_title ?? "Locked content";
+    // Strip any parenthetical tier suffix (e.g. "(Owner tier)") so internal
+    // access-tier names never leak into the DOM. The heading still starts
+    // with "Locked content" (matches the card contract).
+    const maskedTitle = (item.masked_title ?? "Locked content").replace(/\s*\([^)]*\)\s*$/, "");
 
     return (
       <article className="card card-locked" data-testid="content-card-locked">
@@ -31,10 +33,7 @@ export default function ContentCard({ item }: { item: ContentListItem }) {
           <span className="badge badge-locked">Locked</span>
         </div>
         <h3 className="card-title">{maskedTitle}</h3>
-        <p className="card-description">
-          This content is available to the{" "}
-          {ACCESS_LEVEL_LABELS[item.required_access_level]} tier and above.
-        </p>
+        <p className="card-description">Unlock this content to read the full notes, past papers and solutions.</p>
 
         {/* Masked file URL — raw URL is never rendered for locked cards */}
         {displayFileUrl && (
@@ -54,8 +53,9 @@ export default function ContentCard({ item }: { item: ContentListItem }) {
             className="btn btn-secondary"
             href={contactHref}
             data-testid="contact-owner-button"
+            aria-label="Contact with owner"
           >
-            Contact with owner
+            Contact
           </a>
         </div>
       </article>

@@ -6,6 +6,11 @@ import VariantTabs from "./VariantTabs";
 import LockedSection from "./LockedSection";
 import type { ContentItemDetail, BreadcrumbEntry } from "@/lib/types";
 import { ACCESS_LEVEL_LABELS } from "@/lib/types";
+import {
+  sectionLabelForBlockType,
+  sectionKeyForBlockType,
+} from "@/lib/access";
+import { BLOCK_TYPE_STYLES, BLOCK_RENDERER_HINTS } from "@/lib/content-structure";
 
 interface ContentItemViewerProps {
   itemId: string;
@@ -24,6 +29,10 @@ interface ContentItemViewerProps {
  *      come back.
  *   4. The 90% body: full unlocked content, OR the LockedSection blur overlay
  *      with [ Access it ] / [ Contact with owner ].
+ *
+ * Notes-architecture styling: the block_type drives the accent color + label
+ * chip + section label, and special renderer hints (qa/chips/pills/...) select
+ * the body layout (integrated from the ravikishan BlockRenderer contract).
  *
  * Security: when is_locked is true the API returns null for
  * locked_payload/variants, so the client never holds the raw 90%.
@@ -100,12 +109,37 @@ export default function ContentItemViewer({
       ? detail.variants[activeIndex - 1] ?? null
       : null;
 
+  // Notes-architecture block metadata
+  const blockType = detail.block_type ?? "note_concept";
+  const blockStyle = BLOCK_TYPE_STYLES[blockType] ?? BLOCK_TYPE_STYLES.note_concept;
+  const sectionLabel = sectionLabelForBlockType(detail.block_type);
+  const sectionKey = sectionKeyForBlockType(detail.block_type);
+  const rendererHint = BLOCK_RENDERER_HINTS[blockType] ?? null;
+
   return (
     <div className="viewer" data-testid="content-item-viewer">
       <BreadcrumbBar crumbs={breadcrumbs} />
 
       <article className="content-item">
         <header className="content-item-header">
+          <div className="block-type-row">
+            <span
+              className="block-type-chip"
+              style={{
+                color: blockStyle.color,
+                borderColor: `${blockStyle.color}44`,
+                background: `${blockStyle.color}14`,
+              }}
+            >
+              {blockStyle.label}
+            </span>
+            <span className={`section-chip section-chip-${sectionKey}`}>
+              {sectionLabel}
+            </span>
+            {detail.note_type ? (
+              <span className="note-type-chip">Type {detail.note_type}</span>
+            ) : null}
+          </div>
           <h1 className="content-item-title">{detail.title}</h1>
           <span
             className={`badge ${isLocked ? "badge-locked" : "badge-open"}`}
@@ -139,27 +173,89 @@ export default function ContentItemViewer({
               ownerContact={detail.owner_contact}
             />
           ) : activeIndex === 0 ? (
-            <div
-              className="locked-payload"
-              data-testid="locked-payload"
-              dangerouslySetInnerHTML={{ __html: detail.locked_payload ?? "" }}
+            <BlockBody
+              blockType={blockType}
+              hint={rendererHint}
+              accentColor={blockStyle.color}
+              html={detail.locked_payload ?? ""}
             />
           ) : activeVariantContent ? (
-            <div
-              className="locked-payload"
-              data-testid="locked-payload"
-              dangerouslySetInnerHTML={{ __html: activeVariantContent.content }}
+            <BlockBody
+              blockType={blockType}
+              hint={rendererHint}
+              accentColor={blockStyle.color}
+              html={activeVariantContent.content}
             />
           ) : (
-            <div
-              className="locked-payload"
-              data-testid="locked-payload"
-              dangerouslySetInnerHTML={{ __html: detail.locked_payload ?? "" }}
+            <BlockBody
+              blockType={blockType}
+              hint={rendererHint}
+              accentColor={blockStyle.color}
+              html={detail.locked_payload ?? ""}
             />
           )}
         </section>
       </article>
     </div>
+  );
+}
+
+/**
+ * Notes-architecture block body renderer. Wraps the shared HTML payload in a
+ * block card styled by block type, with the ravikishan special-body layouts:
+ *   qa      — split on Problem:/Solution:/Answer: labels
+ *   chips   — keyword pills
+ *   pills   — formula pills (centered, accent border)
+ *   default — markdown body
+ */
+function BlockBody({
+  blockType,
+  hint,
+  accentColor,
+  html,
+}: {
+  blockType: string;
+  hint: string | null;
+  accentColor: string;
+  html: string;
+}) {
+  if (!html) {
+    return (
+      <div className="locked-payload block-body" data-testid="locked-payload">
+        <p className="block-empty">No body content for this block.</p>
+      </div>
+    );
+  }
+
+  if (hint === "qa") {
+    return (
+      <div
+        className="locked-payload block-body block-body-qa"
+        data-testid="locked-payload"
+        style={{ ["--block-accent" as string]: accentColor }}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+    );
+  }
+
+  if (hint === "pills" || hint === "chips") {
+    return (
+      <div
+        className="locked-payload block-body block-body-special"
+        data-testid="locked-payload"
+        style={{ ["--block-accent" as string]: accentColor }}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+    );
+  }
+
+  return (
+    <div
+      className="locked-payload block-body"
+      data-testid="locked-payload"
+      style={{ ["--block-accent" as string]: accentColor }}
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
   );
 }
 

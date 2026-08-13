@@ -21,10 +21,11 @@ interface GenerateRequestBody {
 /**
  * POST /api/ai/generate
  *
- * Authenticated LLM proxy. Wraps Gemini/Groq behind a single abstraction
- * (lib/ai). Request body:
+ * Authenticated LLM proxy. Wraps Gemini/Groq/Together/Hugging Face behind a
+ * single abstraction (lib/ai) with automatic free-tier failover
+ * (Gemini -> Groq -> Together AI -> Hugging Face). Request body:
  *   {
- *     provider?: "gemini" | "groq",      // defaults to AI_DEFAULT_PROVIDER
+ *     provider?: "gemini" | "groq" | "together" | "huggingface", // defaults to AI_DEFAULT_PROVIDER
  *     model?: string,                    // optional model override
  *     messages: [{ role: "system"|"user"|"assistant", content: string }],
  *     temperature?: number,              // 0..2

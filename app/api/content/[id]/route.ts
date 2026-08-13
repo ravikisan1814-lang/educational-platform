@@ -20,6 +20,10 @@ interface ContentItemRpcRow {
   public_teaser: string;
   variant_labels: string[];
   is_locked: boolean;
+  block_type: string | null;
+  section_index: number | null;
+  note_type: number | null;
+  metadata: Record<string, unknown> | null;
   locked_payload: string | null;
   variants: ContentVariant[] | null;
 }
@@ -63,6 +67,14 @@ export async function GET(
           "<p>Demo teaser — the open 10% concept is always visible.</p>",
         variant_labels: ["Type 1"],
         is_locked: false,
+        block_type: "note_concept",
+        section_index: 3,
+        note_type: 1,
+        metadata: {
+          sourceKey: "demo",
+          contentType: "note_concept",
+          classifiedBy: "manual",
+        },
         locked_payload:
           "<p>Demo full notes (public tier in demo mode).</p>",
         variants: null,
@@ -105,6 +117,11 @@ export async function GET(
       ? row.variant_labels
       : ["Type 1"],
     is_locked: Boolean(row.is_locked),
+    // Public block metadata (safe — never contains the 90% payload).
+    block_type: row.block_type ?? null,
+    section_index: row.section_index ?? null,
+    note_type: row.note_type ?? null,
+    metadata: row.metadata ?? null,
     // Under-tier users get null here — the 90% is NOT leaked to the client.
     locked_payload: row.is_locked ? null : (row.locked_payload ?? null),
     variants: row.is_locked ? null : (row.variants ?? null),

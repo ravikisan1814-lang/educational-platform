@@ -1,6 +1,8 @@
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import ContentGrid from "@/components/ContentGrid";
+import QuickQuiz from "@/components/QuickQuiz";
 import {
   SUBJECTS,
   CLASS_11_SECTIONS,
@@ -22,7 +24,7 @@ export default function Home() {
         {/* Hero */}
         <section className="hero hero-premium">
           <span className="hero-badge">NEB Class 11 & 12</span>
-          <h1>Master every subject with premium study material</h1>
+          <h1>Educational content for Class 11 & 12</h1>
           <p>
             Notes, mind-maps, conceptual points, examples, bullet points, past
             year questions with answers, MCQs, short & long questions,
@@ -101,8 +103,16 @@ export default function Home() {
             href="mailto:ravikisan1814@gmail.com"
             className="btn btn-primary btn-lg"
           >
-            Contact with owner
+            Contact us
           </a>
+        </section>
+
+        {/* Quick quiz — one MCQ at a time with a 4s timer */}
+        <QuickQuiz />
+
+        {/* Contents — content cards (anchor target for the header "Contents" link) */}
+        <section id="contents" className="content-section">
+          <ContentGrid />
         </section>
       </main>
       <SiteFooter />

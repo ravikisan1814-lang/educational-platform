@@ -92,12 +92,11 @@ export async function GET(request: NextRequest) {
   } catch {
     // Supabase env vars not configured — serve demo data so the catalog
     // still renders. Real data flows in once env vars are set.
-    return NextResponse.json({
-      data: DEMO_ITEMS,
-      user_access_level: 4,
-      access_level_label: ACCESS_LEVEL_LABELS[4],
-      demo: true,
-    });
+      return NextResponse.json({
+        data: DEMO_ITEMS,
+        user_access_level: 4,
+        demo: true,
+      });
   }
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -153,6 +152,5 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     data: items,
     user_access_level: accessLevel,
-    access_level_label: ACCESS_LEVEL_LABELS[accessLevel],
   });
 }

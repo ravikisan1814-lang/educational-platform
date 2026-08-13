@@ -59,7 +59,7 @@ const MOCK_CATALOG = {
       is_locked: false,
       required_access_level: 4,
       title: "Loksewa basics",
-      description: "Introductory material, publicly available.",
+      description: "Introductory material, available to everyone.",
       masked_title: null,
     },
   ],

@@ -3,6 +3,7 @@ import { AIProviderConfigError, AIProviderError } from "../errors";
 
 const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
 const REQUEST_TIMEOUT_MS = 60_000;
+const GEMINI_DEFAULT_MODEL = "gemini-2.0-flash";
 
 interface GeminiGenerateResponse {
   candidates?: Array<{
@@ -29,7 +30,7 @@ function toGeminiMessages(messages: AIChatMessage[]) {
 
 export const geminiProvider: AIProvider = {
   name: "gemini",
-  defaultModel: "gemini-2.0-flash",
+  defaultModel: GEMINI_DEFAULT_MODEL,
 
   async generate(request: AIGenerateRequest): Promise<AIGenerateResponse> {
     const apiKey = process.env.GEMINI_API_KEY;
@@ -37,7 +38,7 @@ export const geminiProvider: AIProvider = {
       throw new AIProviderConfigError("GEMINI_API_KEY is not configured.");
     }
 
-    const model = request.model ?? this.defaultModel;
+    const model = request.model ?? GEMINI_DEFAULT_MODEL;
     const { systemMessages, contents } = toGeminiMessages(request.messages);
 
     const body: Record<string, unknown> = { contents };

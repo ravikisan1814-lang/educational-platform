@@ -11,6 +11,15 @@ supabase/migrations/
   0002_seed_categories.sql  standard category slugs
   0003_profiles_educational_content.sql  refactor: profiles (role) + educational_content
                          (access_level, owner_contact), RLS recreated
+  0004_hierarchy_content_items.sql  deep hierarchy: exam_groups -> subjects ->
+                         chapters -> sub_chapters -> topics -> content_items
+                         (10% public_teaser / 90% locked_payload + variants,
+                         SECURITY DEFINER get_content_item() gate)
+  0005_notes_architecture_blocks.sql  notes-architecture block metadata:
+                         content_items.block_type / section_index / note_type /
+                         metadata (public), subjects.subject_type / icon /
+                         theme_color / is_locked (catalogue), get_content_item()
+                         returns the block metadata
 
 lib/
   supabase.ts            cookie-based server client (RLS applies) — route handlers

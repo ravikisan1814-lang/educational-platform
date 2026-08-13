@@ -2,6 +2,15 @@
 
 Decisions recorded in reverse chronological order.
 
+## 2026-08-13 — Notes architecture integration (opencode)
+
+1. **Ravikishan notes architecture mapped onto our existing Supabase hierarchy** (`exam_groups -> subjects -> chapters -> sub_chapters -> topics -> content_items`). No new tables — the 8 authoring folders (`concepts/note/example/formula/pyq/set/mindmap/graph`) map to `sub_chapters` (as before) and the canonical `BlockType` id is stored on `content_items.block_type` (migration 0005).
+2. **Access tiers remapped** from the ravikishan 1/2/3 scale onto OUR AccessLevel union (lower = more access): ravikishan 3 (free) → our 4 (Public), 2 (member) → our 2 (Member), 1 (premium) → our 1 (Owner). The RLS predicate `content_items.access_level >= current_access_level()` is unchanged — the importer just writes the mapped value.
+3. **Block metadata is PUBLIC** (`block_type`, `section_index`, `note_type`, `metadata`): they drive the syllabus map + block-type styling + the 11-section render order. The 90% payload stays behind `get_content_item()` exactly as before; `metadata` never carries the locked body (graph specs stay in `variants` JSONB, interface `"graph"`, as the existing model already does).
+4. **Single TS source of truth for the notes taxonomy** lives in `lib/access.ts` (section order, degradation, folder→block-type, folder→access, labels) with a mirror SQL in migration 0005 and the same contract in the importer — kept in lockstep, tested by `tests/unit/notes-architecture.test.ts`.
+5. **11 canonical sections** (append-only render order) drive `section_index` and the viewer content-degradation rule (15% → 100%). The degradation rule is additive: legacy items without a block type default to index 3 (concept) without breaking the existing reader.
+6. **Subject catalogue mirrored onto `subjects`**: `subject_type`, `icon`, `theme_color`, `is_locked` metadata columns (public read) match the ravikishan `SUBJECTS` map, covering our Loksewa/GK/academic slugs.
+
 ## 2026-08-11 — Schema refactor + Vitest (opencode)
 
 1. **Canonical schema** (user-approved refactor): `users` → `profiles` (id, email, role default 'member', access_level default 4); `contents` → `educational_content` (id, title, description, file_url, access_level 1-4, owner_contact). Implemented as migration `0003` (rename + RLS recreation), keeping the migration chain append-only.

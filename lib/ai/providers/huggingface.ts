@@ -1,11 +1,11 @@
 import type { AIGenerateRequest, AIGenerateResponse, AIProvider } from "../types";
 import { AIProviderConfigError, AIProviderError } from "../errors";
 
-const GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
+const HF_ENDPOINT = "https://router.huggingface.co/v1/chat/completions";
 const REQUEST_TIMEOUT_MS = 60_000;
-const GROQ_DEFAULT_MODEL = "llama-3.3-70b-versatile";
+const HUGGINGFACE_DEFAULT_MODEL = "meta-llama/Llama-3.3-70B-Instruct";
 
-interface GroqGenerateResponse {
+interface HuggingFaceGenerateResponse {
   choices?: Array<{ message?: { content?: string } }>;
   usage?: {
     prompt_tokens?: number;
@@ -15,17 +15,21 @@ interface GroqGenerateResponse {
   error?: { message?: string };
 }
 
-export const groqProvider: AIProvider = {
-  name: "groq",
-  defaultModel: GROQ_DEFAULT_MODEL,
+/**
+ * Hugging Face Inference API provider (OpenAI-compatible router endpoint).
+ * Free-tier fallback provider — used when Gemini/Groq/Together are unavailable.
+ */
+export const huggingfaceProvider: AIProvider = {
+  name: "huggingface",
+  defaultModel: HUGGINGFACE_DEFAULT_MODEL,
 
   async generate(request: AIGenerateRequest): Promise<AIGenerateResponse> {
-    const apiKey = process.env.GROQ_API_KEY;
+    const apiKey = process.env.HUGGINGFACE_API_KEY;
     if (!apiKey) {
-      throw new AIProviderConfigError("GROQ_API_KEY is not configured.");
+      throw new AIProviderConfigError("HUGGINGFACE_API_KEY is not configured.");
     }
 
-    const model = request.model ?? GROQ_DEFAULT_MODEL;
+    const model = request.model ?? HUGGINGFACE_DEFAULT_MODEL;
 
     const body: Record<string, unknown> = {
       model,
@@ -34,7 +38,7 @@ export const groqProvider: AIProvider = {
     if (request.temperature !== undefined) body.temperature = request.temperature;
     if (request.maxTokens !== undefined) body.max_tokens = request.maxTokens;
 
-    const res = await fetch(GROQ_ENDPOINT, {
+    const res = await fetch(HF_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -46,16 +50,16 @@ export const groqProvider: AIProvider = {
 
     if (!res.ok) {
       const detail = (await res.text()).slice(0, 500);
-      throw new AIProviderError(`Groq API error (${res.status}): ${detail}`);
+      throw new AIProviderError(`Hugging Face API error (${res.status}): ${detail}`);
     }
 
-    const data = (await res.json()) as GroqGenerateResponse;
+    const data = (await res.json()) as HuggingFaceGenerateResponse;
     if (data.error?.message) {
-      throw new AIProviderError(`Groq API error: ${data.error.message}`);
+      throw new AIProviderError(`Hugging Face API error: ${data.error.message}`);
     }
 
     return {
-      provider: "groq",
+      provider: "huggingface",
       model,
       content: data.choices?.[0]?.message?.content ?? "",
       usage: {
