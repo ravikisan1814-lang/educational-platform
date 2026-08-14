@@ -1,19 +1,13 @@
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import ContentGrid from "@/components/ContentGrid";
+import HomeExplorer from "@/components/home/HomeExplorer";
 import QuickQuiz from "@/components/QuickQuiz";
-import {
-  SUBJECTS,
-  CLASS_11_SECTIONS,
-  CLASS_12_SECTIONS,
-  CONTENT_BLOCKS,
-} from "@/lib/content-structure";
 
 export const metadata = {
-  title: "EduPlatform — Premium Class 11 & 12 Study Material",
+  title: "EduPlatform — Class 11, Class 12 & Knowledge",
   description:
-    "Premium notes, mind-maps, conceptual points, examples, past year questions, MCQs, numericals and formulas for Class 11 and Class 12.",
+    "Class 11 notes, Class 11E, Class 11 more — Class 12 notes, Class 12E, Class 12 more — Loksewa knowledge and world knowledge. All in one place.",
 };
 
 export default function Home() {
@@ -23,74 +17,33 @@ export default function Home() {
       <main>
         {/* Hero */}
         <section className="hero hero-premium">
-          <span className="hero-badge">NEB Class 11 & 12</span>
-          <h1>Educational content for Class 11 & 12</h1>
+          <span className="hero-badge">NEB Class 11 & 12 · Loksewa · GK</span>
+          <h1>Class 11, Class 12 & Knowledge</h1>
           <p>
-            Notes, mind-maps, conceptual points, examples, bullet points, past
-            year questions with answers, MCQs, short & long questions,
-            numericals and formulas — all in one place.
+            Notes, mind-maps, conceptual points, examples, past year questions,
+            MCQs, numericals and formulas — organized under three sections.
+            Open any section freely; locks only appear inside content items.
           </p>
           <div className="hero-actions">
-            <Link href="/catalog" className="btn btn-primary btn-lg">
-              Browse Catalog
+            <Link href="#class-11" className="btn btn-primary btn-lg">
+              Class 11
             </Link>
-            <Link href="#subjects" className="btn btn-secondary btn-lg">
-              Explore Subjects
+            <Link href="#class-12" className="btn btn-secondary btn-lg">
+              Class 12
+            </Link>
+            <Link href="#knowledge" className="btn btn-secondary btn-lg">
+              Knowledge
             </Link>
           </div>
         </section>
 
-        {/* Subjects */}
-        <section id="subjects" className="content-section">
-          <h2>Seven subjects, one platform</h2>
-          <div className="subject-grid">
-            {SUBJECTS.map((subject) => (
-              <div key={subject.slug} className="subject-card">
-                <h3>{subject.name}</h3>
-                <p>{subject.description}</p>
-              </div>
-            ))}
-          </div>
+        {/* The 3 home sections — Class 11, Class 12, Knowledge */}
+        <section id="home-sections" className="content-section">
+          <HomeExplorer />
         </section>
 
-        {/* Class 11 */}
-        <section id="class-11" className="content-section">
-          <h2>Class 11</h2>
-          <div className="class-grid">
-            {CLASS_11_SECTIONS.map((section) => (
-              <div key={section.id} className="class-card">
-                <h3>{section.title}</h3>
-                <p>{section.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Class 12 */}
-        <section id="class-12" className="content-section">
-          <h2>Class 12</h2>
-          <div className="class-grid">
-            {CLASS_12_SECTIONS.map((section) => (
-              <div key={section.id} className="class-card">
-                <h3>{section.title}</h3>
-                <p>{section.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Content blocks */}
-        <section id="features" className="content-section">
-          <h2>Every topic, fully covered</h2>
-          <div className="block-grid">
-            {CONTENT_BLOCKS.map((block) => (
-              <div key={block.id} className="block-card">
-                <h3>{block.label}</h3>
-                <p>{block.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* Quick quiz — one MCQ at a time with a 4s timer */}
+        <QuickQuiz />
 
         {/* CTA */}
         <section id="upgrade" className="content-section cta-section">
@@ -105,14 +58,6 @@ export default function Home() {
           >
             Contact us
           </a>
-        </section>
-
-        {/* Quick quiz — one MCQ at a time with a 4s timer */}
-        <QuickQuiz />
-
-        {/* Contents — content cards (anchor target for the header "Contents" link) */}
-        <section id="contents" className="content-section">
-          <ContentGrid />
         </section>
       </main>
       <SiteFooter />

@@ -2,6 +2,17 @@
 
 Decisions recorded in reverse chronological order.
 
+## 2026-08-14 — Home restructure: 3 sections + global search (opencode)
+
+1. **Home page shows exactly three top-level sections** — Class 11, Class 12, Knowledge — each with nested sub-sections:
+   - Class 11 → Class 11 notes, Class 11E, Class 11 more
+   - Class 12 → Class 12 notes, Class 12E, Class 12 more
+   - Knowledge → Loksewa knowledge, World knowledge
+2. **Outer navigation is NEVER locked.** Users click into any section/sub-section freely. Locks only appear INSIDE content items (the existing 90% in-content gate handled by `ContentItemViewer`/`LockedSection`). This matches the user's requirement: "lock those sections inside not outside; lock on opening it only".
+3. **The old static home grids were removed** (`SUBJECTS`, `CLASS_11_SECTIONS`, `CLASS_12_SECTIONS`, `CONTENT_BLOCKS` in `lib/content-structure.ts`) and replaced with `HOME_SECTIONS` — a data-driven catalogue that maps each sub-section to an exam-group slug (and optional subject slug) so the `HomeExplorer` can pull matching content from `/api/hierarchy`.
+4. **Global search bar added to the header** (`components/GlobalSearch.tsx`). It searches subjects/chapters/topics from `/api/hierarchy` and shows tagged results (Subject/Chapter/Topic) in a dropdown. Keyboard: `/` or Cmd/Ctrl+K to focus, Esc to close.
+5. **Demo hierarchy updated** in `/api/hierarchy/route.ts` to the new group slugs (`class-11`, `class-11e`, `class-11-more`, `class-12`, `class-12e`, `class-12-more`, `loksewa`, `general-knowledge`) so the home explorer and search have content when Supabase env vars are not configured.
+
 ## 2026-08-13 — Notes architecture integration (opencode)
 
 1. **Ravikishan notes architecture mapped onto our existing Supabase hierarchy** (`exam_groups -> subjects -> chapters -> sub_chapters -> topics -> content_items`). No new tables — the 8 authoring folders (`concepts/note/example/formula/pyq/set/mindmap/graph`) map to `sub_chapters` (as before) and the canonical `BlockType` id is stored on `content_items.block_type` (migration 0005).

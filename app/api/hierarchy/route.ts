@@ -60,11 +60,195 @@ interface ExamGroupRow {
 
 const DEMO_HIERARCHY: ExamGroupNode[] = [
   {
+    id: "eg-class-11",
+    slug: "class-11",
+    name: "Class 11",
+    description: "NEB Class 11 core curriculum.",
+    sort_order: 1,
+    subjects: [
+      {
+        id: "s-11-notes",
+        slug: "notes",
+        name: "Class 11 notes",
+        description: "Core Class 11 notes and study material.",
+        sort_order: 1,
+        chapters: [
+          {
+            id: "c-11-physics",
+            slug: "physics",
+            name: "Physics",
+            description: "Mechanics, optics, heat, electricity and modern physics.",
+            sort_order: 1,
+            sub_chapters: [
+              {
+                id: "sc-11-vectors",
+                slug: "vectors",
+                name: "Vectors",
+                description: "Vector operations and applications.",
+                sort_order: 1,
+                topics: [
+                  {
+                    id: "t-11-vector-addition",
+                    slug: "vector-addition",
+                    name: "Vector Addition",
+                    description: "Adding vectors graphically and by components.",
+                    sort_order: 1,
+                    content_items: [
+                      {
+                        id: "ci-11-vector-addition",
+                        title: "Vector Addition — Full Notes",
+                        topic_id: "t-11-vector-addition",
+                        access_level: 2,
+                        owner_contact: "ravikisan1814@gmail.com",
+                        public_teaser:
+                          "<p>Vectors are quantities that have both <strong>magnitude</strong> and <strong>direction</strong>.</p>",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: "c-11-chemistry",
+            slug: "chemistry",
+            name: "Chemistry",
+            description: "Physical, organic and inorganic chemistry.",
+            sort_order: 2,
+            sub_chapters: [],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "eg-class-11e",
+    slug: "class-11e",
+    name: "Class 11E",
+    description: "English-medium Class 11 content.",
+    sort_order: 2,
+    subjects: [
+      {
+        id: "s-11e-english",
+        slug: "english",
+        name: "English",
+        description: "English-medium Class 11 literature and grammar.",
+        sort_order: 1,
+        chapters: [],
+      },
+    ],
+  },
+  {
+    id: "eg-class-11-more",
+    slug: "class-11-more",
+    name: "Class 11 more",
+    description: "Extended Class 11 topics and practice.",
+    sort_order: 3,
+    subjects: [
+      {
+        id: "s-11-more-practice",
+        slug: "practice",
+        name: "Practice Sets",
+        description: "Additional Class 11 practice material.",
+        sort_order: 1,
+        chapters: [],
+      },
+    ],
+  },
+  {
+    id: "eg-class-12",
+    slug: "class-12",
+    name: "Class 12",
+    description: "NEB Class 12 core curriculum.",
+    sort_order: 4,
+    subjects: [
+      {
+        id: "s-12-notes",
+        slug: "notes",
+        name: "Class 12 notes",
+        description: "Core Class 12 notes and study material.",
+        sort_order: 1,
+        chapters: [
+          {
+            id: "c-12-physics",
+            slug: "physics",
+            name: "Physics",
+            description: "Mechanics, optics, heat, electricity and modern physics.",
+            sort_order: 1,
+            sub_chapters: [
+              {
+                id: "sc-12-optics",
+                slug: "optics",
+                name: "Optics",
+                description: "Reflection, refraction, mirrors and lenses.",
+                sort_order: 1,
+                topics: [
+                  {
+                    id: "t-12-mirror-formula",
+                    slug: "mirror-formula",
+                    name: "Mirror Formula",
+                    description: "1/f = 1/v + 1/u and sign conventions.",
+                    sort_order: 1,
+                    content_items: [
+                      {
+                        id: "ci-12-mirror-formula",
+                        title: "Mirror Formula — Optics Notes",
+                        topic_id: "t-12-mirror-formula",
+                        access_level: 2,
+                        owner_contact: "ravikisan1814@gmail.com",
+                        public_teaser:
+                          "<p>The mirror formula relates object distance (u), image distance (v) and focal length (f).</p>",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "eg-class-12e",
+    slug: "class-12e",
+    name: "Class 12E",
+    description: "English-medium Class 12 content.",
+    sort_order: 5,
+    subjects: [
+      {
+        id: "s-12e-english",
+        slug: "english",
+        name: "English",
+        description: "English-medium Class 12 literature and grammar.",
+        sort_order: 1,
+        chapters: [],
+      },
+    ],
+  },
+  {
+    id: "eg-class-12-more",
+    slug: "class-12-more",
+    name: "Class 12 more",
+    description: "Extended Class 12 topics and practice.",
+    sort_order: 6,
+    subjects: [
+      {
+        id: "s-12-more-practice",
+        slug: "practice",
+        name: "Practice Sets",
+        description: "Additional Class 12 practice material.",
+        sort_order: 1,
+        chapters: [],
+      },
+    ],
+  },
+  {
     id: "eg-loksewa",
     slug: "loksewa",
     name: "Loksewa",
     description: "Loksewa / Public Service Commission exam preparation.",
-    sort_order: 1,
+    sort_order: 7,
     subjects: [
       {
         id: "s-governance",
@@ -118,7 +302,7 @@ const DEMO_HIERARCHY: ExamGroupNode[] = [
     slug: "general-knowledge",
     name: "General Knowledge",
     description: "General knowledge and current awareness material.",
-    sort_order: 2,
+    sort_order: 8,
     subjects: [
       {
         id: "s-geography",
@@ -127,60 +311,6 @@ const DEMO_HIERARCHY: ExamGroupNode[] = [
         description: "World and Nepal geography for general knowledge.",
         sort_order: 1,
         chapters: [],
-      },
-    ],
-  },
-  {
-    id: "eg-academic-core",
-    slug: "academic-core",
-    name: "Academic Core",
-    description: "NEB Class 11 & 12 core subjects.",
-    sort_order: 3,
-    subjects: [
-      {
-        id: "s-physics",
-        slug: "physics",
-        name: "Physics",
-        description: "Mechanics, optics, heat, electricity and modern physics.",
-        sort_order: 1,
-        chapters: [
-          {
-            id: "c-mechanics",
-            slug: "mechanics",
-            name: "Mechanics",
-            description: "Vectors, kinematics, dynamics and Newton laws.",
-            sort_order: 1,
-            sub_chapters: [
-              {
-                id: "sc-vectors",
-                slug: "vectors",
-                name: "Vectors",
-                description: "Vector operations and applications.",
-                sort_order: 1,
-                topics: [
-                  {
-                    id: "t-vector-addition",
-                    slug: "vector-addition",
-                    name: "Vector Addition",
-                    description: "Adding vectors graphically and by components.",
-                    sort_order: 1,
-                    content_items: [
-                      {
-                        id: "ci-vector-addition",
-                        title: "Vector Addition — Full Notes",
-                        topic_id: "t-vector-addition",
-                        access_level: 2,
-                        owner_contact: "ravikisan1814@gmail.com",
-                        public_teaser:
-                          "<p>Vectors are quantities that have both <strong>magnitude</strong> and <strong>direction</strong>.</p>",
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
       },
     ],
   },

@@ -15,62 +15,111 @@ import {
 } from "@/lib/access";
 
 // ---------------------------------------------------------------------------
-// Original catalogues
+// Home catalogue — the 3 top-level sections shown on the home page.
+//
+//   Class 11  -> Class 11 notes, Class 11E, Class 11 more
+//   Class 12  -> Class 12 notes, Class 12E, Class 12 more
+//   Knowledge -> Loksewa knowledge, World knowledge
+//
+// Each sub-section maps to an exam-group slug (and optionally a subject slug)
+// so the HomeExplorer can pull the matching content from /api/hierarchy.
+// Outer navigation is NEVER locked — locks only appear inside content items.
 // ---------------------------------------------------------------------------
 
-export interface Subject {
-  name: string;
-  slug: string;
-  description: string;
-}
-
-export interface ClassSection {
+export interface HomeSubSection {
   id: string;
   title: string;
   description: string;
+  /** Exam-group slug this sub-section belongs to (e.g. "class-11", "loksewa"). */
+  groupSlug: string;
+  /** Optional subject slug to filter within the group (e.g. "notes"). */
+  subjectSlug?: string;
 }
 
-export interface ContentBlockType {
+export interface HomeSection {
   id: string;
-  label: string;
+  title: string;
   description: string;
+  /** Exam-group slug this section maps to. */
+  groupSlug: string;
+  subSections: HomeSubSection[];
 }
 
-export const SUBJECTS: Subject[] = [
-  { name: "Biology", slug: "biology", description: "Life sciences, cell biology, genetics, and ecology." },
-  { name: "Chemistry", slug: "chemistry", description: "Physical, organic, and inorganic chemistry." },
-  { name: "English", slug: "english", description: "Grammar, literature, and composition." },
-  { name: "Mathematics", slug: "mathematics", description: "Algebra, calculus, geometry, and statistics." },
-  { name: "Nepali", slug: "nepali", description: "Nepali language, literature, and grammar." },
-  { name: "Physics", slug: "physics", description: "Mechanics, waves, electricity, and modern physics." },
-  { name: "Computer Science", slug: "computer-science", description: "Programming, databases, and computer fundamentals." },
-];
-
-export const CLASS_11_SECTIONS: ClassSection[] = [
-  { id: "class-11", title: "Class 11", description: "Core Class 11 curriculum." },
-  { id: "class-11-more", title: "Class 11 More", description: "Extended Class 11 topics and practice." },
-  { id: "class-11-extra", title: "Class 11 Extra", description: "Additional Class 11 resources and past papers." },
-];
-
-export const CLASS_12_SECTIONS: ClassSection[] = [
-  { id: "class-12", title: "Class 12", description: "Core Class 12 curriculum." },
-  { id: "class-12-more", title: "Class 12 More", description: "Extended Class 12 topics and practice." },
-  { id: "class-12-extra", title: "Class 12 Extra", description: "Additional Class 12 resources and past papers." },
-];
-
-export const CONTENT_BLOCKS: ContentBlockType[] = [
-  { id: "note", label: "Note", description: "Detailed topic notes." },
-  { id: "topic", label: "Topic", description: "Topic overview and outline." },
-  { id: "mind-map", label: "Mind-map", description: "Visual mind-map of the topic." },
-  { id: "conceptual-points", label: "Conceptual Points", description: "Key concepts explained." },
-  { id: "examples", label: "Examples", description: "Worked examples." },
-  { id: "bullet-points", label: "Bullet Points", description: "Quick revision bullet points." },
-  { id: "past-year-questions", label: "Past Year Questions", description: "Previous exam questions with answers." },
-  { id: "mcqs", label: "MCQs", description: "Multiple choice questions." },
-  { id: "short-questions", label: "Short Questions", description: "Short answer questions." },
-  { id: "long-questions", label: "Long Questions", description: "Long answer questions." },
-  { id: "numericals", label: "Numericals", description: "Numerical problems with solutions." },
-  { id: "formulas", label: "Formulas", description: "Important formulas." },
+export const HOME_SECTIONS: HomeSection[] = [
+  {
+    id: "class-11",
+    title: "Class 11",
+    description: "NEB Class 11 curriculum — notes, English medium (E) and more.",
+    groupSlug: "class-11",
+    subSections: [
+      {
+        id: "class-11-notes",
+        title: "Class 11 notes",
+        description: "Core Class 11 notes and study material.",
+        groupSlug: "class-11",
+        subjectSlug: "notes",
+      },
+      {
+        id: "class-11e",
+        title: "Class 11E",
+        description: "English-medium Class 11 content.",
+        groupSlug: "class-11e",
+      },
+      {
+        id: "class-11-more",
+        title: "Class 11 more",
+        description: "Extended Class 11 topics and practice.",
+        groupSlug: "class-11-more",
+      },
+    ],
+  },
+  {
+    id: "class-12",
+    title: "Class 12",
+    description: "NEB Class 12 curriculum — notes, English medium (E) and more.",
+    groupSlug: "class-12",
+    subSections: [
+      {
+        id: "class-12-notes",
+        title: "Class 12 notes",
+        description: "Core Class 12 notes and study material.",
+        groupSlug: "class-12",
+        subjectSlug: "notes",
+      },
+      {
+        id: "class-12e",
+        title: "Class 12E",
+        description: "English-medium Class 12 content.",
+        groupSlug: "class-12e",
+      },
+      {
+        id: "class-12-more",
+        title: "Class 12 more",
+        description: "Extended Class 12 topics and practice.",
+        groupSlug: "class-12-more",
+      },
+    ],
+  },
+  {
+    id: "knowledge",
+    title: "Knowledge",
+    description: "Loksewa and world knowledge for competitive exams.",
+    groupSlug: "knowledge",
+    subSections: [
+      {
+        id: "loksewa-knowledge",
+        title: "Loksewa knowledge",
+        description: "Public Service Commission (Loksewa) exam preparation.",
+        groupSlug: "loksewa",
+      },
+      {
+        id: "world-knowledge",
+        title: "World knowledge",
+        description: "General and world knowledge material.",
+        groupSlug: "general-knowledge",
+      },
+    ],
+  },
 ];
 
 // ---------------------------------------------------------------------------

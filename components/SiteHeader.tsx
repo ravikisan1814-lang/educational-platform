@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
+import GlobalSearch from "./GlobalSearch";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -90,6 +91,7 @@ export default function SiteHeader() {
       <Link href="/" className="brand">
         EduPlatform
       </Link>
+      <GlobalSearch />
       <nav
         id="site-nav"
         aria-label="Primary"

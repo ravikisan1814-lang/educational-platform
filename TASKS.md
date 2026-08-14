@@ -159,6 +159,29 @@ Deliverables:
 4. `npm test` — **37/37 passing** (fixed the Vitest worker crash via `pool: "vmThreads"`).
 5. `npx playwright test` — **90/90 passing** across desktop (1440px), tablet (768px) and mobile (Pixel 7).
 
+## Home restructure — 3 sections + global search — COMPLETE (opencode, 2026-08-14)
+
+Restructured the home page to show exactly three top-level sections with nested sub-sections, and added a global search bar to the header.
+
+Deliverables:
+- `lib/content-structure.ts` — replaced the old static `SUBJECTS`/`CLASS_11_SECTIONS`/`CLASS_12_SECTIONS`/`CONTENT_BLOCKS` with `HOME_SECTIONS`:
+  - **Class 11** → Class 11 notes, Class 11E, Class 11 more
+  - **Class 12** → Class 12 notes, Class 12E, Class 12 more
+  - **Knowledge** → Loksewa knowledge, World knowledge
+- `components/home/HomeExplorer.tsx` — expandable 3-section explorer. Each section opens its sub-sections, which open subjects → chapters → sub-chapters → topics from `/api/hierarchy`. **Outer navigation is NEVER locked** — locks only appear inside content items (the existing 90% in-content gate).
+- `components/GlobalSearch.tsx` — global search bar in the header. Searches subjects/chapters/topics from `/api/hierarchy`, shows tagged results (Subject/Chapter/Topic) in a dropdown. Keyboard: `/` or Cmd/Ctrl+K to focus, Esc to close.
+- `components/SiteHeader.tsx` — added the global search bar.
+- `app/page.tsx` — now renders only the 3 home sections via `HomeExplorer` (removed the old static subject/class/content-block grids).
+- `app/api/hierarchy/route.ts` — demo hierarchy updated to the new group slugs (`class-11`, `class-11e`, `class-11-more`, `class-12`, `class-12e`, `class-12-more`, `loksewa`, `general-knowledge`).
+- `app/globals.css` — styles for the home explorer + global search (responsive).
+- `tests/responsive-layout.spec.ts` — updated to assert the 3 home sections render on every viewport.
+
+**Verification steps:**
+1. `npx tsc --noEmit` — passes.
+2. `npm test` — 37/37 passing.
+3. `npm run lint` — passes.
+4. `npx playwright test` — E2E suite green.
+
 ## Open follow-ups
 - Content ingestion/CRUD (owner admin UI).
 - Tier upgrade flow (update `users.access_level`).

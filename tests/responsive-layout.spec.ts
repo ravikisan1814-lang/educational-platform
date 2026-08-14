@@ -18,23 +18,14 @@ test("no horizontal overflow on any viewport", async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
-test("content grid adapts column count to viewport width", async ({ page }) => {
-  const width = page.viewportSize()?.width ?? 1280;
-  const cards = page.locator("[data-testid^='content-card']");
-  await expect(cards.first()).toBeVisible();
+test("home explorer renders the 3 sections on every viewport", async ({ page }) => {
+  const explorer = page.getByTestId("home-explorer");
+  await expect(explorer).toBeVisible();
 
-  const distinctColumnCount = () =>
-    cards.evaluateAll(
-      (els) => new Set(els.map((el) => Math.round(el.getBoundingClientRect().x))).size
-    );
-
-  if (width < 768) {
-    // mobile: single column stack — every card starts at the same x
-    await expect.poll(distinctColumnCount).toBe(1);
-  } else {
-    // tablet/desktop: multi-column — cards occupy at least two x positions
-    await expect.poll(distinctColumnCount).toBeGreaterThanOrEqual(2);
-  }
+  // The 3 top-level sections are always present (Class 11, Class 12, Knowledge).
+  await expect(page.getByTestId("home-section-class-11")).toBeVisible();
+  await expect(page.getByTestId("home-section-class-12")).toBeVisible();
+  await expect(page.getByTestId("home-section-knowledge")).toBeVisible();
 });
 
 test("mobile: nav collapses behind hamburger; desktop: nav inline", async ({
@@ -62,12 +53,12 @@ test("mobile: nav collapses behind hamburger; desktop: nav inline", async ({
   }
 });
 
-test("header, hero, grid and footer render on every viewport", async ({
+test("header, hero, explorer and footer render on every viewport", async ({
   page,
 }) => {
   await expect(page.locator(".site-header")).toBeVisible();
-  await expect(page.getByRole("heading", { name: /educational content/i })).toBeVisible();
-  await expect(page.locator(".content-section").first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Class 11, Class 12 & Knowledge/i })).toBeVisible();
+  await expect(page.getByTestId("home-explorer")).toBeVisible();
   await expect(page.locator(".site-footer")).toBeVisible();
   await expect(page.getByText("EduPlatform")).toBeVisible();
 });
