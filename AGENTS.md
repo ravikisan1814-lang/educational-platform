@@ -1,6 +1,6 @@
 # AGENTS.md — Development tools agreement
 
-This repo is developed by opencode with support for Cline, Kilo code, and local development tools (Ollama, etc.). Follow these rules.
+This repo is maintained collaboratively using Cline, opencode, Kilo code, and VS Code. Follow these rules.
 
 ## Ground rules
 - Read this file and AGENT_STATUS.md first. Update AGENT_STATUS.md with progress.

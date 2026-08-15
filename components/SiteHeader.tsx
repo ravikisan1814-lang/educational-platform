@@ -9,6 +9,10 @@ import { ACCESS_LEVEL_LABELS } from "@/lib/types";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
+  { href: "/learn", label: "Learn" },
+  { href: "/#contents", label: "Contents" },
+  { href: "/#upgrade", label: "Pricing" },
+  { href: "/#contact", label: "Contact" },
   { href: "/info", label: "Information" },
 ];
 
@@ -141,12 +145,80 @@ export default function SiteHeader() {
         <ThemeToggle />
         {!session ? (
           <>
-            <Link href="/login" className="btn-upgrade" style={{ background: "var(--accent)" }}>
-              Sign in
+            <button
+              type="button"
+              className="icon-btn"
+              aria-label="Notifications"
+              title="Notifications"
+            >
+              <BellIcon />
+              <span className="icon-badge" aria-hidden="true">
+                3
+              </span>
+            </button>
+            <button
+              type="button"
+              className="icon-btn"
+              aria-label="Saved items"
+              title="Saved"
+            >
+              <BookmarkIcon />
+            </button>
+            <Link href="/#upgrade" className="btn-upgrade">
+              Upgrade to Premium
             </Link>
+            <div className="profile-menu" ref={profileRef}>
+              <button
+                type="button"
+                className="profile-trigger"
+                aria-label="Profile menu"
+                aria-expanded={profileOpen}
+                onClick={() => setProfileOpen((value) => !value)}
+              >
+                <span className="avatar" aria-hidden="true">
+                  U
+                </span>
+                <ChevronDownIcon />
+              </button>
+              {profileOpen && (
+                <div className="profile-dropdown">
+                  <Link href="/#contact" onClick={() => setProfileOpen(false)}>
+                    Profile
+                  </Link>
+                  <Link href="/#contact" onClick={() => setProfileOpen(false)}>
+                    Settings
+                  </Link>
+                  <Link href="/#upgrade" onClick={() => setProfileOpen(false)}>
+                    Upgrade to Premium
+                  </Link>
+                  <Link href="/login" onClick={() => setProfileOpen(false)}>
+                    Sign in
+                  </Link>
+                </div>
+              )}
+            </div>
           </>
         ) : (
           <>
+            <button
+              type="button"
+              className="icon-btn"
+              aria-label="Notifications"
+              title="Notifications"
+            >
+              <BellIcon />
+              <span className="icon-badge" aria-hidden="true">
+                3
+              </span>
+            </button>
+            <button
+              type="button"
+              className="icon-btn"
+              aria-label="Saved items"
+              title="Saved"
+            >
+              <BookmarkIcon />
+            </button>
             <a
               href="mailto:ravikisan1814@gmail.com"
               className="btn-upgrade"

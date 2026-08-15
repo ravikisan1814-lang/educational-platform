@@ -100,6 +100,26 @@ export const HOME_SECTIONS: HomeSection[] = [
       },
     ],
   },
+  {
+    id: "knowledge",
+    title: "Knowledge",
+    description: "Loksewa and general knowledge for competitive exams.",
+    groupSlug: "loksewa",
+    subSections: [
+      {
+        id: "loksewa",
+        title: "Loksewa Knowledge",
+        description: "Loksewa exam preparation material.",
+        groupSlug: "loksewa",
+      },
+      {
+        id: "general-knowledge",
+        title: "World Knowledge",
+        description: "General knowledge and world affairs.",
+        groupSlug: "general-knowledge",
+      },
+    ],
+  },
 ];
 
 // ---------------------------------------------------------------------------
