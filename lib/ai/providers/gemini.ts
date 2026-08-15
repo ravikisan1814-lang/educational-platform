@@ -1,5 +1,6 @@
 import type { AIGenerateRequest, AIGenerateResponse, AIProvider, AIChatMessage } from "../types";
 import { AIProviderConfigError, AIProviderError } from "../errors";
+import { getRotatingKeys, nextRotatingKey } from "../key-rotation";
 
 const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
 const REQUEST_TIMEOUT_MS = 60_000;
@@ -33,7 +34,8 @@ export const geminiProvider: AIProvider = {
   defaultModel: GEMINI_DEFAULT_MODEL,
 
   async generate(request: AIGenerateRequest): Promise<AIGenerateResponse> {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const keys = getRotatingKeys("GEMINI_API_KEY");
+    const apiKey = nextRotatingKey(keys);
     if (!apiKey) {
       throw new AIProviderConfigError("GEMINI_API_KEY is not configured.");
     }

@@ -22,10 +22,8 @@ test("home explorer renders the 3 sections on every viewport", async ({ page }) 
   const explorer = page.getByTestId("home-explorer");
   await expect(explorer).toBeVisible();
 
-  // The 3 top-level sections are always present (Class 11, Class 12, Knowledge).
   await expect(page.getByTestId("home-section-class-11")).toBeVisible();
   await expect(page.getByTestId("home-section-class-12")).toBeVisible();
-  await expect(page.getByTestId("home-section-knowledge")).toBeVisible();
 });
 
 test("mobile: nav collapses behind hamburger; desktop: nav inline", async ({
@@ -49,17 +47,17 @@ test("mobile: nav collapses behind hamburger; desktop: nav inline", async ({
   } else {
     await expect(hamburger).toHaveCount(0);
     await expect(nav).toBeVisible();
-    await expect(nav.getByRole("link", { name: "Contents" })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Info" })).toBeVisible();
   }
 });
 
-test("header, hero, explorer and footer render on every viewport", async ({
+test("header, hero, explorer and question recap render on every viewport", async ({
   page,
 }) => {
   await expect(page.locator(".site-header")).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Class 11, Class 12 & Knowledge/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Class 11, Class 12/i })).toBeVisible();
   await expect(page.getByTestId("home-explorer")).toBeVisible();
-  await expect(page.locator(".site-footer")).toBeVisible();
+  await expect(page.getByTestId("question-recap")).toBeVisible();
   await expect(page.getByText("EduPlatform")).toBeVisible();
 });
 

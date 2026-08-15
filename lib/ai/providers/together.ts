@@ -1,5 +1,6 @@
 import type { AIGenerateRequest, AIGenerateResponse, AIProvider } from "../types";
 import { AIProviderConfigError, AIProviderError } from "../errors";
+import { getRotatingKeys, nextRotatingKey } from "../key-rotation";
 
 const TOGETHER_ENDPOINT = "https://api.together.xyz/v1/chat/completions";
 const REQUEST_TIMEOUT_MS = 60_000;
@@ -24,7 +25,8 @@ export const togetherProvider: AIProvider = {
   defaultModel: TOGETHER_DEFAULT_MODEL,
 
   async generate(request: AIGenerateRequest): Promise<AIGenerateResponse> {
-    const apiKey = process.env.TOGETHER_API_KEY;
+    const keys = getRotatingKeys("TOGETHER_API_KEY");
+    const apiKey = nextRotatingKey(keys);
     if (!apiKey) {
       throw new AIProviderConfigError("TOGETHER_API_KEY is not configured.");
     }

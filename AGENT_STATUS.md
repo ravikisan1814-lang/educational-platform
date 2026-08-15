@@ -16,22 +16,36 @@ Last updated: 2026-08-13
 - roo code (removed 2026-08-12)
 - Devin desktop (removed 2026-08-12)
 
-### Status: HOME RESTRUCTURE (3 SECTIONS + GLOBAL SEARCH) — COMPLETE
+### Status: AUTH / ADMIN / INFO FLOW — COMPLETE
 
 ### Tasks (this session)
 | Task | Status |
 | --- | --- |
-| `lib/content-structure.ts` — replaced old static `SUBJECTS`/`CLASS_11_SECTIONS`/`CLASS_12_SECTIONS`/`CONTENT_BLOCKS` with `HOME_SECTIONS` (Class 11 → notes/E/more, Class 12 → notes/E/more, Knowledge → Loksewa/World) | Done |
-| `components/home/HomeExplorer.tsx` — expandable 3-section explorer; sub-sections open subjects → chapters → sub-chapters → topics from `/api/hierarchy`; outer navigation NEVER locked | Done |
-| `components/GlobalSearch.tsx` — global search bar in header; searches subjects/chapters/topics; tagged results dropdown; `/` or Cmd/Ctrl+K focus, Esc close | Done |
-| `components/SiteHeader.tsx` — added the global search bar | Done |
-| `app/page.tsx` — now renders only the 3 home sections via `HomeExplorer` (removed old static grids) | Done |
-| `app/api/hierarchy/route.ts` — demo hierarchy updated to new group slugs (`class-11`, `class-11e`, `class-11-more`, `class-12`, `class-12e`, `class-12-more`, `loksewa`, `general-knowledge`) | Done |
-| `app/globals.css` — styles for home explorer + global search (responsive) | Done |
-| `tests/responsive-layout.spec.ts` — updated to assert the 3 home sections render on every viewport | Done |
-| `npx tsc --noEmit` — passes | Done |
-| `npm test` — 37/37 passing | Done |
-| `npm run lint` — passes | Done |
+| Migrations `0012_auth_approval.sql` + `0013_content_approval_gate.sql` — profiles.status, approval trigger, owner-only admin RLS, get_content_item approval gate | Done |
+| `app/api/auth/signup/route.ts` — email/password signup; trigger sets `status = 'pending'` | Done |
+| `app/api/auth/signin/route.ts` — signin; pending/rejected accounts return 403 with contact | Done |
+| `app/api/auth/signout/route.ts` — POST signout | Done |
+| `app/api/admin/users/route.ts` — GET owner-only user list + PATCH approve/hold/reject/tier | Done |
+| `app/login/page.tsx` — Sign in / Create account tabs; pending notice + `ravikisan1814@gmail.com` | Done |
+| `app/admin/page.tsx` + `components/AdminPanel.tsx` — owner-only member management table with status badges + tier select | Done |
+| `app/info/page.tsx` — Rules & Notices: tier percentages, official notices, owner contact | Done |
+| `components/SiteHeader.tsx` — real session: Sign in pill, profile dropdown (email + tier label), owner-only "Member management", working Sign out, `/info` nav link | Done |
+| `components/learn/LockedSection.tsx` — visible "Contact with owner: <email>" line | Done |
+| `lib/supabase/client.ts` — hoisted literal env reads | Done |
+| Docs updated (AGENT_STATUS, TASKS, DECISIONS, SECURITY, ARCHITECTURE) | Done |
+
+### Verification
+| Check | Result |
+| --- | --- |
+| `npx tsc --noEmit` | ✅ passes |
+| `npm run lint` | ✅ passes |
+| `npm test` | ✅ 37/37 passing |
+| `npm run build` | ✅ passes (Next.js 15.5.23 production build) |
+| `npx playwright test` | ✅ 90/90 passing |
+
+### Open follow-ups
+- Migrations 0012/0013 must be applied to the live Supabase project (they exist in `supabase/migrations/`; the profile status column and approval gate depend on them).
+- Live smoke test: sign up → pending in /admin → approve → tier assignable → sign in → /learn.
 
 ### History
 - (2026-08-13) Notes-architecture integration — see `NOTE: no git push yet (user: "no push to git yet")`. `npx tsc --noEmit` ✅ and `npm run build` ✅ (Next.js production build incl. lint+type-check). `npm test` ⚠️ blocked by a pre-existing Vitest 4 worker crash (`reading 'config'` on a bare probe import — affects the pre-existing test files too; not caused by this change).

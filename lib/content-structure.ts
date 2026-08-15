@@ -54,7 +54,7 @@ export const HOME_SECTIONS: HomeSection[] = [
     subSections: [
       {
         id: "class-11-notes",
-        title: "Class 11 notes",
+        title: "Class 11 Notes",
         description: "Core Class 11 notes and study material.",
         groupSlug: "class-11",
         subjectSlug: "notes",
@@ -67,7 +67,7 @@ export const HOME_SECTIONS: HomeSection[] = [
       },
       {
         id: "class-11-more",
-        title: "Class 11 more",
+        title: "Class 11 More",
         description: "Extended Class 11 topics and practice.",
         groupSlug: "class-11-more",
       },
@@ -81,7 +81,7 @@ export const HOME_SECTIONS: HomeSection[] = [
     subSections: [
       {
         id: "class-12-notes",
-        title: "Class 12 notes",
+        title: "Class 12 Notes",
         description: "Core Class 12 notes and study material.",
         groupSlug: "class-12",
         subjectSlug: "notes",
@@ -94,29 +94,9 @@ export const HOME_SECTIONS: HomeSection[] = [
       },
       {
         id: "class-12-more",
-        title: "Class 12 more",
+        title: "Class 12 More",
         description: "Extended Class 12 topics and practice.",
         groupSlug: "class-12-more",
-      },
-    ],
-  },
-  {
-    id: "knowledge",
-    title: "Knowledge",
-    description: "Loksewa and world knowledge for competitive exams.",
-    groupSlug: "knowledge",
-    subSections: [
-      {
-        id: "loksewa-knowledge",
-        title: "Loksewa knowledge",
-        description: "Public Service Commission (Loksewa) exam preparation.",
-        groupSlug: "loksewa",
-      },
-      {
-        id: "world-knowledge",
-        title: "World knowledge",
-        description: "General and world knowledge material.",
-        groupSlug: "general-knowledge",
       },
     ],
   },

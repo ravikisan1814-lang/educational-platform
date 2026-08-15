@@ -124,6 +124,31 @@ Deliverables:
 5. `npx playwright test` — existing E2E stays green (viewer markup additive only).
 6. Apply `supabase/migrations/0005_notes_architecture_blocks.sql`, then `npm run migrate:content` with real env — verify block_type/section_index breakdown in the console summary.
 
+## Auth / Admin / Info flow — COMPLETE (opencode, 2026-08-15)
+
+Deliverables:
+- `supabase/migrations/0012_auth_approval.sql` — profiles.status + approval trigger + admin RLS
+- `supabase/migrations/0013_content_approval_gate.sql` — get_content_item() approval gate
+- `app/api/auth/signup/route.ts` — email/password signup; trigger sets status='pending'
+- `app/api/auth/signin/route.ts` — signin; pending/rejected return 403 with contact
+- `app/api/auth/signout/route.ts` — POST signout
+- `app/api/admin/users/route.ts` — GET owner-only user list + PATCH approve/hold/reject/tier
+- `app/login/page.tsx` — Sign in / Create account tabs; pending notice + ravikisan1814@gmail.com
+- `app/admin/page.tsx` + `components/AdminPanel.tsx` — owner-only member management table
+- `app/info/page.tsx` — Rules & Notices: tier percentages, official notices, owner contact
+- `components/SiteHeader.tsx` — real session: Sign in pill, profile dropdown, Member management, Sign out, /info link
+- `components/learn/LockedSection.tsx` — visible "Contact with owner: <email>" line
+- `lib/supabase/client.ts` — hoisted literal env reads
+
+**Verification steps:**
+1. `npx tsc --noEmit` — passes.
+2. `npm run lint` — passes.
+3. `npm test` — 37/37 passing.
+4. `npm run build` — passes (Next.js 15.5.23 production build).
+5. `npx playwright test` — 90/90 passing.
+
+**Note:** Migrations 0012/0013 must be applied to the live Supabase project before the approval flow works.
+
 ## Playwright E2E 90/90 green — COMPLETE (opencode, 2026-08-13)
 
 Fixed 7 failing E2E tests (internal access-tier names leaking into the DOM + catalog layout collapsing to a single column).
@@ -182,7 +207,80 @@ Deliverables:
 3. `npm run lint` — passes.
 4. `npx playwright test` — E2E suite green.
 
+## Catalog navigation catch-all — COMPLETE (opencode, 2026-08-14)
+
+Replaced the broken 5-segment catalog deep route with a single catch-all that handles all hierarchy depths 1-5.
+
+Deliverables:
+- Deleted `app/catalog/[examGroupSlug]/[subjectSlug]/[chapterSlug]/[subChapterSlug]/[topicSlug]/page.tsx` (the broken specific deep route).
+- `app/catalog/[...slug]/page.tsx` — new catch-all route. Accepts `params: Promise<{ slug: string[] }>`, fetches the full hierarchy client-side from `/api/hierarchy` (same as `HierarchyExplorer`), and renders based on `slug.length`:
+  - depth 1: exam group detail → list subjects
+  - depth 2: subject detail → list chapters
+  - depth 3: chapter detail → list sub-chapters
+  - depth 4: sub-chapter detail → list topics
+  - depth 5: topic detail → renders `TopicContentView` with the real user access level from `/api/hierarchy` and the content item fetched via `/api/content/[id]` (the SECURITY DEFINER RPC gate decides whether `locked_payload`/`variants` come back).
+  - Breadcrumbs for every depth (Catalog → group → subject → chapter → sub-chapter → topic).
+  - Uses the existing catalog layout (`app/catalog/layout.tsx` provides SiteHeader + CatalogSidebar + `.page-shell`); does NOT wrap in another `.page-shell`.
+  - Uses existing CSS classes (`exam-group-grid`, `subject-quick-grid`, `topic-grid`, `breadcrumb`, etc.).
+- `components/TopicContentView.tsx` — adapted to accept `ContentItemDetail` (the shape returned by `/api/content/[id]`) instead of the old `ContentItem` shape. `locked_payload` is now rendered as HTML (string) and `variants` use the `ContentVariant` shape.
+
+**Verification steps:**
+1. `npx tsc --noEmit` — passes.
+2. `npm run lint` — passes.
+3. `npm run build` — passes (Next.js 15.5.23 production build; `/catalog/[...slug]` route present).
+4. `npm test` — 37/37 passing.
+5. `npx playwright test` — **90/90 passing** across desktop (1440px), tablet (768px) and mobile (Pixel 7).
+
+## AI chat widget + multi-key rotation — COMPLETE (opencode, 2026-08-15)
+
+Added a floating AI chat widget on all pages that answers only about the website content and returns clickable links to chapters/topics/notes.
+
+Deliverables:
+- `components/AiChatWidget.tsx` — floating chat widget (bottom-right corner, all pages via root layout). Sends messages to `/api/ai/chat`, renders markdown links as clickable Next.js `<Link>`s, typing indicator, error handling, auto-scroll.
+- `app/api/ai/chat/route.ts` — platform-scoped chat API. Fetches the full syllabus hierarchy (with `/learn/` URLs) and injects it into the system prompt so the AI can answer questions about the website content and return exact clickable links to chapters/topics/notes. Out-of-scope queries get the "official site" fallback reply.
+- `lib/ai/key-rotation.ts` — multi-key rotation helper. Each provider supports a primary key plus numbered fallback keys (`GEMINI_API_KEY_2..10`, `OPENROUTER_API_KEY_2..10`, etc.) rotated round-robin to spread quota across multiple free-tier accounts.
+- `lib/ai/providers/openrouter.ts` — new OpenRouter provider (OpenAI-compatible chat completions, free-tier model `meta-llama/llama-3.3-70b-instruct:free`). Added to the failover chain: Gemini → Groq → Together AI → Hugging Face → OpenRouter.
+- `lib/ai/providers/gemini.ts` / `groq.ts` / `together.ts` / `huggingface.ts` — all updated to use the multi-key rotation helper.
+- `lib/ai/types.ts` — added `"openrouter"` to `AIProviderName`.
+- `lib/ai/index.ts` — registered OpenRouter, updated failover order, exported key-rotation helpers.
+- `app/layout.tsx` — added `<AiChatWidget />` to the root layout so it appears on every page.
+- `app/globals.css` — chat widget styles (FAB, panel, messages, typing dots, links, responsive).
+- `.env.example` — documented multi-key rotation env names + OpenRouter.
+
+**Verification steps:**
+1. `npx tsc --noEmit` — passes.
+2. `npm run lint` — passes.
+3. `npm run build` — passes (with `NODE_OPTIONS=--max-old-space-size=4096` on Windows; `/api/ai/chat` route present).
+4. `npm test` — 37/37 passing.
+5. `npx playwright test` — **90/90 passing** across desktop (1440px), tablet (768px) and mobile (Pixel 7).
+
+**To enable:** add API keys to `.env.local` (gitignored). For multiple free-tier accounts, add numbered keys (`GEMINI_API_KEY_2`, `OPENROUTER_API_KEY_2`, ... up to `_10`).
+
 ## Open follow-ups
+</｜DSML｜>
+<task_progress>
+- [x] Analyze requirements and explore existing patterns
+- [x] Review old deep route, layout, hierarchy API, content API, TopicContentView
+- [x] Check catalog directory structure for conflicts
+- [x] Delete old 5-segment deep route
+- [x] Create app/catalog/[...slug]/page.tsx catch-all (depths 1-5 + breadcrumbs)
+- [x] Adapt TopicContentView for real /api/content/[id] data shape
+- [x] Verify: tsc, lint, build, npm test, playwright test
+- [x] Update AGENT_STATUS.md / TASKS.md
+- [x] Clarify AI chat feature requirements (placement, keys, link targets)
+- [x] Build key rotation helper
+- [x] Add OpenRouter provider
+- [x] Update Gemini provider with key rotation
+- [x] Update AI registry (types, index, failover order)
+- [x] Update Groq/Together/HuggingFace providers with key rotation
+- [x] Create /api/ai/chat route with hierarchy context
+- [x] Create AiChatWidget component (floating, all pages)
+- [x] Add chat widget to root layout
+- [x] Add chat widget CSS
+- [x] Update .env.example with key rotation names
+- [x] Verify: tsc, lint, build, npm test, playwright test
+- [ ] Update AGENT_STATUS.md / TASKS.md
+</task_progress>
 - Content ingestion/CRUD (owner admin UI).
 - Tier upgrade flow (update `users.access_level`).
 - Seed demo contents with real `body_markdown`.

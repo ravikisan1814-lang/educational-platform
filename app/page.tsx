@@ -3,6 +3,46 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import HomeExplorer from "@/components/home/HomeExplorer";
 import QuickQuiz from "@/components/QuickQuiz";
+import QuestionRecap from "@/components/QuestionRecap";
+
+const SUBJECTS = [
+  {
+    name: "Physics",
+    slug: "physics",
+    description: "Mechanics, optics, heat, electricity and modern physics.",
+    icon: "⚛️",
+  },
+  {
+    name: "Chemistry",
+    slug: "chemistry",
+    description: "Physical, organic and inorganic chemistry.",
+    icon: "🧪",
+  },
+  {
+    name: "Biology",
+    slug: "biology",
+    description: "Cell biology, genetics and ecology.",
+    icon: "🧬",
+  },
+  {
+    name: "Mathematics",
+    slug: "mathematics",
+    description: "Algebra, calculus, geometry and statistics.",
+    icon: "📐",
+  },
+  {
+    name: "English",
+    slug: "english",
+    description: "Grammar, literature and composition.",
+    icon: "📚",
+  },
+  {
+    name: "Nepali",
+    slug: "nepali",
+    description: "Nepali language, literature and grammar.",
+    icon: "🖊️",
+  },
+];
 
 export const metadata = {
   title: "EduPlatform — Class 11, Class 12 & Knowledge",
@@ -17,11 +57,9 @@ export default function Home() {
       <main>
         {/* Hero */}
         <section className="hero hero-premium">
-          <span className="hero-badge">NEB Class 11 & 12 · Loksewa · GK</span>
+          <span className="hero-badge">NEB Class 11 & 12</span>
           <h1>Class 11, Class 12 & Knowledge</h1>
           <p>
-            Notes, mind-maps, conceptual points, examples, past year questions,
-            MCQs, numericals and formulas — organized under three sections.
             Open any section freely; locks only appear inside content items.
           </p>
           <div className="hero-actions">
@@ -31,13 +69,27 @@ export default function Home() {
             <Link href="#class-12" className="btn btn-secondary btn-lg">
               Class 12
             </Link>
-            <Link href="#knowledge" className="btn btn-secondary btn-lg">
-              Knowledge
-            </Link>
           </div>
         </section>
 
-        {/* The 3 home sections — Class 11, Class 12, Knowledge */}
+        {/* Subject Dashboard */}
+        <section id="subjects" className="content-section">
+          <h2 style={{ margin: "0 0 1rem", fontSize: "1.4rem" }}>Subjects</h2>
+          <div className="content-grid">
+            {SUBJECTS.map((subject) => (
+              <Link
+                key={subject.slug}
+                href={`/catalog/class-11/${subject.slug}`}
+                className="card subject-card"
+              >
+                <h3>{subject.name}</h3>
+                <p>{subject.description}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* The 3 home sections — Class 11, Class 12 */}
         <section id="home-sections" className="content-section">
           <HomeExplorer />
         </section>
@@ -45,20 +97,8 @@ export default function Home() {
         {/* Quick quiz — one MCQ at a time with a 4s timer */}
         <QuickQuiz />
 
-        {/* CTA */}
-        <section id="upgrade" className="content-section cta-section">
-          <h2>Unlock premium content</h2>
-          <p>
-            Contact the owner to upgrade your access tier and get full notes,
-            past papers and solutions.
-          </p>
-          <a
-            href="mailto:ravikisan1814@gmail.com"
-            className="btn btn-primary btn-lg"
-          >
-            Contact us
-          </a>
-        </section>
+        {/* Question Recap — all questions with answers at the end */}
+        <QuestionRecap />
       </main>
       <SiteFooter />
     </div>

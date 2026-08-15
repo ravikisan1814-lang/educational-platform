@@ -2,12 +2,12 @@
 
 import { useMemo, useState } from "react";
 import LockedSection from "./learn/LockedSection";
-import type { AccessLevel, ContentItem, LockedPayload } from "@/lib/types";
+import type { AccessLevel, ContentItemDetail } from "@/lib/types";
 import { ACCESS_LEVEL_LABELS } from "@/lib/types";
 import { isContentLockedFor } from "@/lib/access";
 
 interface TopicContentViewProps {
-  content: ContentItem | null;
+  content: ContentItemDetail | null;
   userAccessLevel: number;
 }
 
@@ -19,6 +19,10 @@ interface TopicContentViewProps {
  * - If the user's tier is high enough, shows the full locked payload;
  *   otherwise shows the LockedSection blur overlay. The raw payload is
  *   never passed down when locked — the server only sends what RLS allows.
+ *
+ * `content` is a ContentItemDetail as returned by GET /api/content/[id]
+ * (the SECURITY DEFINER RPC gate). When locked, locked_payload/variants are
+ * null so the 90% is never leaked to the client.
  */
 export function TopicContentView({
   content,
@@ -48,16 +52,17 @@ export function TopicContentView({
   }
 
   const labels =
-    content.variants.length > 0
-      ? ["Type 1", ...content.variants.map((v) => v.label || v.type)]
+    content.variant_labels.length > 0
+      ? content.variant_labels
       : ["Type 1"];
 
   const activeIndex = Math.min(activeVariant, labels.length - 1);
 
   // Type 1 is the canonical locked_payload; variant index i>=1 maps to
-  // content.variants[i-1].
+  // content.variants[i-1]. When locked, variants is null so all tabs show
+  // the LockedSection (no content leak).
   const activeVariantContent =
-    !locked && content.variants.length > 0
+    !locked && content.variants && content.variants.length > 0
       ? content.variants[activeIndex - 1] ?? null
       : null;
 
@@ -96,43 +101,26 @@ export function TopicContentView({
               className="locked-payload"
               data-testid="locked-payload"
               dangerouslySetInnerHTML={{
-                __html: content.locked_payload
-                  ? renderLockedPayload(content.locked_payload)
-                  : "",
+                __html: content.locked_payload ?? "",
               }}
             />
           ) : activeVariantContent ? (
             <div
               className="locked-payload"
               data-testid="locked-payload"
-              dangerouslySetInnerHTML={{ __html: activeVariantContent.note }}
+              dangerouslySetInnerHTML={{ __html: activeVariantContent.content }}
             />
           ) : (
             <div
               className="locked-payload"
               data-testid="locked-payload"
-              dangerouslySetInnerHTML={{ __html: renderLockedPayload(content.locked_payload) }}
+              dangerouslySetInnerHTML={{
+                __html: content.locked_payload ?? "",
+              }}
             />
           )}
         </section>
       </article>
     </div>
   );
-}
-
-function renderLockedPayload(payload: LockedPayload): string {
-  const parts: string[] = [];
-  if (payload.statements?.length) {
-    parts.push("<h3>Statements</h3><ul>" + payload.statements.map((s) => `<li>${s}</li>`).join("") + "</ul>");
-  }
-  if (payload.bullet_points?.length) {
-    parts.push("<h3>Bullet points</h3><ul>" + payload.bullet_points.map((b) => `<li>${b}</li>`).join("") + "</ul>");
-  }
-  if (payload.examples?.length) {
-    parts.push("<h3>Examples</h3><ul>" + payload.examples.map((e) => `<li>${e}</li>`).join("") + "</ul>");
-  }
-  if (payload.past_year_questions?.length) {
-    parts.push("<h3>Past year questions</h3><ul>" + payload.past_year_questions.map((q) => `<li>${q}</li>`).join("") + "</ul>");
-  }
-  return parts.join("");
 }

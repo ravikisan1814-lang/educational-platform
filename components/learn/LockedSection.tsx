@@ -69,6 +69,12 @@ export default function LockedSection({
             Contact with owner
           </a>
         </div>
+        <p className="locked-overlay-tier">
+          Contact with owner:{" "}
+          <a href={`mailto:${ownerContact ?? "ravikisan1814@gmail.com"}`}>
+            {ownerContact ?? "ravikisan1814@gmail.com"}
+          </a>
+        </p>
       </div>
     </div>
   );

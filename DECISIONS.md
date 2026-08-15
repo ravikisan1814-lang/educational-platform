@@ -2,6 +2,16 @@
 
 Decisions recorded in reverse chronological order.
 
+## 2026-08-15 — Auth / Admin / Info flow (opencode)
+
+1. **New signups start as pending (tier 4 = Public)** via the `handle_new_user()` trigger in migration 0012. The trigger sets `profiles.status = 'pending'` and `access_level = 4`. Owners must approve accounts before they can log in.
+2. **`get_content_item()` enforces the approval gate** in migration 0013: non-owner users whose profile is not `active` cannot read `locked_payload` or `variants`, even if their tier would otherwise pass. Owners (`access_level = 1`) bypass the status check.
+3. **Auth routes are simple REST wrappers** around Supabase Auth (`signUp`, `signInWithPassword`, `signOut`). The signup route does not auto-login; the signin route returns 403 for pending/rejected accounts with a contact email.
+4. **Admin route is owner-only** via explicit session + access_level checks (defense in depth on top of RLS). It returns all profiles and supports PATCH updates to `status` and `access_level`.
+5. **Login page uses tabs** (Sign in / Create account) with the existing `.btn`, `.btn-primary`, `.btn-secondary` base styles. Pending accounts see a notice with `ravikisan1814@gmail.com`.
+6. **SiteHeader uses the browser Supabase client** to read the session on mount. Signed-out users see a "Sign in" pill; signed-in users see a profile dropdown with email + tier label. Owners see an extra "Member management" link to `/admin`. Sign out calls the API and redirects to `/`.
+7. **LockedSection now shows the owner email** as a visible line inside the overlay: "Contact with owner: <email>".
+
 ## 2026-08-14 — Home restructure: 3 sections + global search (opencode)
 
 1. **Home page shows exactly three top-level sections** — Class 11, Class 12, Knowledge — each with nested sub-sections:

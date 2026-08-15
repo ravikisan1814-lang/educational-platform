@@ -4,9 +4,11 @@ import { geminiProvider } from "./providers/gemini";
 import { groqProvider } from "./providers/groq";
 import { togetherProvider } from "./providers/together";
 import { huggingfaceProvider } from "./providers/huggingface";
+import { openrouterProvider } from "./providers/openrouter";
 
 export * from "./types";
 export * from "./errors";
+export * from "./key-rotation";
 
 /** Registry of available providers. Add new providers here to expose them. */
 export const AI_PROVIDERS: Record<AIProviderName, AIProvider> = {
@@ -14,20 +16,22 @@ export const AI_PROVIDERS: Record<AIProviderName, AIProvider> = {
   groq: groqProvider,
   together: togetherProvider,
   huggingface: huggingfaceProvider,
+  openrouter: openrouterProvider,
 };
 
 export const AI_PROVIDER_NAMES = Object.keys(AI_PROVIDERS) as AIProviderName[];
 
 /**
- * Free-tier failover priority: Gemini -> Groq -> Together AI -> Hugging Face.
- * If a provider is not configured or fails (rate limit / 5xx / timeout), the
- * next provider in this order is tried automatically.
+ * Free-tier failover priority: Gemini -> Groq -> Together AI -> Hugging Face
+ * -> OpenRouter. If a provider is not configured or fails (rate limit / 5xx /
+ * timeout), the next provider in this order is tried automatically.
  */
 export const AI_PROVIDER_ORDER: AIProviderName[] = [
   "gemini",
   "groq",
   "together",
   "huggingface",
+  "openrouter",
 ];
 
 /**

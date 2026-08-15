@@ -1,5 +1,8 @@
 import { createBrowserClient } from "@supabase/ssr";
 
+const SUPABASE_URL = "NEXT_PUBLIC_SUPABASE_URL";
+const SUPABASE_ANON_KEY = "NEXT_PUBLIC_SUPABASE_ANON_KEY";
+
 function requireEnv(name: string): string {
   const value = process.env[name];
   if (!value) {
@@ -17,7 +20,7 @@ function requireEnv(name: string): string {
  */
 export function createClient() {
   return createBrowserClient(
-    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
-    requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY")
+    requireEnv(SUPABASE_URL),
+    requireEnv(SUPABASE_ANON_KEY)
   );
 }

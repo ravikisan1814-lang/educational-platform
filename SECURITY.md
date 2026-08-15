@@ -33,6 +33,11 @@ in the server-only handling of secrets.
   (`current_access_level() = 1`); the service_role key (bypasses RLS) is for
   server-only admin tooling.
 
+## Account approval
+- New signups are created with `profiles.status = 'pending'` (migration 0012).
+- The `get_content_item()` RPC checks profile status: only `active` users or owners (`access_level = 1`) can read the locked payload (migration 0013).
+- Pending/rejected accounts cannot log in (signin route returns 403).
+
 ## API layer
 - `GET /api/contents` — public; never selects `file_url`; masks
   title/description of locked items; exposes `is_locked`,

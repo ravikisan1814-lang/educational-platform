@@ -1,58 +1,42 @@
 import Link from "next/link";
 
 /**
- * Footer shown ONLY on the home page. Credits the platform owner, describes
- * the NEB/CDC curriculum coverage, and offers a feedback mailto link.
+ * Footer shown ONLY on the home page.
  */
 export default function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="footer-inner">
-        <p className="footer-brand">Ravikisan</p>
+        <p className="footer-brand">Made with curiosity by Ravikisan</p>
 
-        {/* Owner intro */}
         <p className="footer-credit">
-          {"Hi, I'm "}
-          <strong>Ravikisan</strong>
-          {
-            " — a passionate educator and developer building this platform to make NEB Class 11 & 12 study material clear, structured and accessible for every student."
-          }
+          <strong>Academic Compliance</strong>
+        </p>
+        <p className="footer-credit">
+          This platform strictly adheres to the latest curriculum, guidelines,
+          and evaluation standards set by the National Examinations Board (NEB)
+          and the Curriculum Development Centre (CDC), Nepal.
         </p>
 
-        {/* NEB / CDC description */}
         <p className="footer-credit">
-          {"This platform follows the "}
-          <strong>NEB (National Examination Board)</strong>
-          {" and "}
-          <strong>CDC (Curriculum Development Centre)</strong>
-          {
-            " curriculum for Nepal's Class 11 & 12 — covering syllabus, notes, past year questions, MCQs, numericals and formulas across seven subjects."
-          }
+          <strong>Contact & Support</strong>
         </p>
-
-        {/* Feedback */}
         <p className="footer-credit">
-          {"Have feedback or a question? "}
+          Have questions or feedback? Reach out to us at{" "}
           <a
-            href="mailto:ravikisan1814@gmail.com?subject=EduPlatform%20Feedback"
+            href="mailto:ravikisan1814@gmail.com"
             className="footer-credit-link"
           >
-            Send feedback
+            ravikisan1814@gmail.com
           </a>
           .
         </p>
 
-        <nav className="footer-nav" aria-label="Footer">
-          <Link href="/">Home</Link>
-          <Link href="/learn">Learn</Link>
-          <Link href="mailto:ravikisan1814@gmail.com">Contact</Link>
-        </nav>
+        <p className="footer-credit">Designed and developed by Ravikishan</p>
 
-        {/* Glowing credit line */}
-        <p className="footer-glow">Designed and developed by Ravikisan</p>
-
-        {/* Glowing tagline at the very bottom */}
-        <p className="footer-glow footer-glow-tagline">Knowledge is Power</p>
+        <p className="footer-glow footer-glow-tagline" style={{ fontStyle: "italic" }}>
+          Knowledge is power
+        </p>
       </div>
     </footer>
   );
