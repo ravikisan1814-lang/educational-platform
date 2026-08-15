@@ -5,7 +5,7 @@ export interface AIChatMessage {
   content: string;
 }
 
-export type AIProviderName = "gemini" | "groq" | "mistral";
+export type AIProviderName = "gemini" | "groq" | "mistral" | "openrouter" | "fireworks";
 
 export interface AIGenerateRequest {
   /** Provider key; falls back to AI_DEFAULT_PROVIDER env var. */

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import SyllabusAnalytics from "@/components/visuals/SyllabusAnalytics";
+import JsonInspector from "@/components/visuals/JsonInspector";
 import type {
   ExamGroupNode,
   SubjectNode,
@@ -102,6 +104,8 @@ export default function HierarchyExplorer({
           in-content 90% notes are tier-gated.
         </p>
         {renderTopics(tree)}
+        <SyllabusAnalytics tree={tree} />
+        <JsonInspector data={tree} title="Syllabus map — raw JSON" collapsed={1} />
       </section>
     </div>
   );

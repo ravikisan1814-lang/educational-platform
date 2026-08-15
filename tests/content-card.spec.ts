@@ -113,14 +113,14 @@ test("unlocked cards do not show 'Access it' or 'Contact with owner'", async ({
   ).toHaveCount(0);
 });
 
-test("'Access it' links to the upgrade section and 'Contact with owner' is a mailto link", async ({
+test("'Access it' and 'Contact with owner' are mailto links to the owner", async ({
   page,
 }) => {
   const card = page.getByTestId("content-card-locked").first();
   await expect(card).toBeVisible();
 
   const accessIt = card.getByRole("link", { name: "Access it" });
-  await expect(accessIt).toHaveAttribute("href", "/#upgrade");
+  await expect(accessIt).toHaveAttribute("href", /^mailto:/);
 
   const contact = card.getByRole("link", { name: "Contact with owner" });
   await expect(contact).toHaveAttribute("href", /^mailto:/);

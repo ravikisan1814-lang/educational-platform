@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
+import ContentGrid from "@/components/ContentGrid";
 import type { ExamGroupNode } from "@/lib/types";
 
 export const metadata = {
@@ -56,6 +57,11 @@ export default async function CatalogPage() {
           Browse the complete syllabus hierarchy. Click through exam groups,
           subjects, chapters, and topics to find the content you need.
         </p>
+      </section>
+
+      <section className="content-section">
+        <h2>Latest Content</h2>
+        <ContentGrid />
       </section>
 
       {examGroups.length === 0 ? (

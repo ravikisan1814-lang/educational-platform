@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import type { AccessLevel } from "@/lib/types";
 import { ACCESS_LEVEL_LABELS } from "@/lib/types";
 
@@ -53,14 +52,22 @@ export default function LockedSection({
           <strong>{ACCESS_LEVEL_LABELS[requiredAccessLevel]}</strong> tier and
           above.
         </p>
+        <p className="locked-overlay-mail" data-testid="locked-owner-mail">
+          Contact with owner:{" "}
+          <a href={contactHref(ownerContact)}>
+            {ownerContact && ownerContact.includes("@")
+              ? ownerContact
+              : "ravikisan1814@gmail.com"}
+          </a>
+        </p>
         <div className="locked-actions">
-          <Link
+          <a
             className="btn btn-primary"
-            href="/#upgrade"
+            href={contactHref(ownerContact)}
             data-testid="locked-access-it"
           >
             Access it
-          </Link>
+          </a>
           <a
             className="btn btn-secondary"
             href={contactHref(ownerContact)}

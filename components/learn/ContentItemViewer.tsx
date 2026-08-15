@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import VariantTabs from "./VariantTabs";
 import LockedSection from "./LockedSection";
+import VizPanel from "@/components/visuals/VizPanel";
+import JsonInspector from "@/components/visuals/JsonInspector";
+import ThreeScene from "@/components/visuals/ThreeScene";
 import type { ContentItemDetail, BreadcrumbEntry } from "@/lib/types";
 import { ACCESS_LEVEL_LABELS } from "@/lib/types";
 
@@ -159,6 +162,15 @@ export default function ContentItemViewer({
           )}
         </section>
       </article>
+
+      {/* Enhanced visuals — both lazy-load their engines on open (never on
+          first paint) and render only public / already-unlocked data. */}
+      <section className="visuals-stack" aria-label="Interactive visuals">
+        <JsonInspector data={detail} title="Note data — raw JSON" collapsed={2} />
+        <VizPanel title="3D model (drag to rotate, scroll to zoom)">
+          <ThreeScene />
+        </VizPanel>
+      </section>
     </div>
   );
 }

@@ -90,10 +90,12 @@ test.describe("Catalog page — shared", () => {
     ).toBeVisible();
 
     // Internal access tiers (Owner/Member/Co-member/Public) are not shown
-    // to external users.
+    // to external users. Exact match: masked card titles legitimately contain
+    // tier words ("Locked content (Owner tier)"), so substring matching would
+    // false-positive against them and the "Contact owner" CTA.
     await expect(page.locator(".tier-legend")).toHaveCount(0);
     for (const label of ["Owner", "Member", "Co-member", "Public"]) {
-      await expect(page.getByText(label)).toHaveCount(0);
+      await expect(page.getByText(label, { exact: true })).toHaveCount(0);
     }
   });
 

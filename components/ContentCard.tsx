@@ -9,7 +9,7 @@ import type { ContentListItem } from "@/lib/types";
  */
 function maskRawFileUrl(isLocked: boolean, fileUrl?: string | null): string | null {
   if (!isLocked) return fileUrl ?? null;
-  return "🔒 [Content URL hidden — requires access]";
+  return "[Content URL hidden — requires access]";
 }
 
 export default function ContentCard({ item }: { item: ContentListItem }) {
@@ -47,9 +47,9 @@ export default function ContentCard({ item }: { item: ContentListItem }) {
         )}
 
         <div className="card-actions">
-          <Link className="btn btn-primary" href="/#upgrade" data-testid="access-it-button">
+          <a className="btn btn-primary" href={contactHref} data-testid="access-it-button">
             Access it
-          </Link>
+          </a>
           <a
             className="btn btn-secondary"
             href={contactHref}

@@ -1,28 +1,45 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import type { AIProviderName } from "@/lib/ai";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
-  provider?: AIProviderName;
+}
+
+/** Turn markdown [text](/path) into clickable links. */
+function renderContent(text: string) {
+  const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
+  return parts.map((part, i) => {
+    const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (match) {
+      const [, label, href] = match;
+      if (href.startsWith("/")) {
+        return (
+          <a key={i} href={href} className="ai-chat-link">
+            {label}
+          </a>
+        );
+      }
+      return (
+        <a key={i} href={href} className="ai-chat-link" target="_blank" rel="noopener noreferrer">
+          {label}
+        </a>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
 }
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [provider, setProvider] = useState<AIProviderName>("mistral");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handleSend = async (e: React.FormEvent) => {
@@ -30,19 +47,17 @@ export default function ChatInterface() {
     if (!input.trim() || loading) return;
 
     const userMessage: Message = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMessage]);
+    const next = [...messages, userMessage];
+    setMessages(next);
     setInput("");
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch("/api/ai/generate", {
+      const response = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          provider,
-          messages: [...messages, userMessage],
-        }),
+        body: JSON.stringify({ messages: next }),
       });
 
       if (!response.ok) {
@@ -51,16 +66,12 @@ export default function ChatInterface() {
       }
 
       const data = await response.json();
-      const assistantMessage: Message = {
-        role: "assistant",
-        content: data.data.content,
-        provider,
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: data.data.content as string },
+      ]);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Unknown error";
-      setError(errorMessage);
-      console.error("Chat error:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -69,62 +80,49 @@ export default function ChatInterface() {
   return (
     <div className="chat-container">
       <div className="chat-header">
-        <h2>AI Chat</h2>
-        <div className="provider-selector">
-          <label htmlFor="provider-select">Provider:</label>
-          <select
-            id="provider-select"
-            value={provider}
-            onChange={(e) => setProvider(e.target.value as AIProviderName)}
-            disabled={loading}
-          >
-            <option value="mistral">Mistral</option>
-            <option value="gemini">Gemini</option>
-            <option value="groq">Groq</option>
-          </select>
-        </div>
+        <h2>Study assistant</h2>
+        <p className="chat-subtitle">
+          Ask about syllabus topics on this site — answers include named links.
+        </p>
       </div>
 
       <div className="chat-messages">
         {messages.length === 0 && (
           <div className="chat-welcome">
-            <p>Start a conversation with {provider}...</p>
+            <p>
+              Try: &ldquo;Where are Class 11 Physics notes?&rdquo; or &ldquo;Link me to
+              Loksewa topics.&rdquo;
+            </p>
           </div>
         )}
         {messages.map((msg, idx) => (
           <div key={idx} className={`message message-${msg.role}`}>
-            <div className="message-badge">
-              {msg.role === "user" ? "You" : msg.provider ?? provider}
-            </div>
-            <div className="message-content">{msg.content}</div>
+            <div className="message-badge">{msg.role === "user" ? "You" : "Assistant"}</div>
+            <div className="message-content">{renderContent(msg.content)}</div>
           </div>
         ))}
         {loading && (
           <div className="message message-assistant">
-            <div className="message-badge">{provider}</div>
+            <div className="message-badge">Assistant</div>
             <div className="message-content loading">Thinking...</div>
-          </div>
-        )}
-        {error && (
-          <div className="message message-error">
-            <div className="message-badge">Error</div>
-            <div className="message-content">{error}</div>
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSend} className="chat-form">
+      {error && <div className="chat-error">{error}</div>}
+
+      <form className="chat-input-form" onSubmit={(e) => void handleSend(e)}>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={`Ask ${provider}...`}
+          placeholder="Ask about a subject or topic on this site…"
           disabled={loading}
           className="chat-input"
         />
-        <button type="submit" disabled={loading || !input.trim()} className="chat-send">
-          {loading ? "..." : "Send"}
+        <button type="submit" disabled={loading || !input.trim()} className="btn btn-primary">
+          Send
         </button>
       </form>
     </div>

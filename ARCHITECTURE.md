@@ -35,10 +35,15 @@ app/
   globals.css            design tokens (light/dark custom properties) + layout CSS
   layout.tsx             root layout + pre-paint theme init script (FOUC-free)
   page.tsx               home: header, hero, content grid, footer
+  login/page.tsx         client: Sign in / Create account tabs, pending-approval notice
+  info/page.tsx          "Rules & Notices": tier % table, official notices, owner contact
+  admin/page.tsx         server owner-check + AdminPanel (member management)
   api/
     contents/route.ts    GET — public list: metadata + is_locked, masked titles
     contents/[id]/route.ts GET — full content, RLS-gated (401 anon / 404 no-access)
     ai/generate/route.ts POST — authenticated LLM proxy over lib/ai
+    auth/signin, signup, signout/route.ts  POST — cookie-session email/password auth
+    admin/users/route.ts GET/PATCH — owner-only member list + status/tier changes
 
 tests/
   unit/access.test.ts    Vitest: access-control matrix (npm test)
@@ -64,6 +69,13 @@ vitest.config.ts         unit-test runner (tests/unit/**)
 - **Theming**: inline script in the root layout applies `.dark` before paint
   (localStorage first, system preference second); CSS custom properties swap
   palette. No FOUC, no external dependency.
+- **Auth**: route handlers call `supabase.auth.*` with the cookie-based server
+  client; the browser never sees Supabase Auth keys beyond the publishable
+  anon key. Signup → `handle_new_user` trigger writes a `pending` profile;
+  approved signins redirect to `/learn`.
+- **Admin**: server component on `/admin` checks the session tier (owner +
+  approved), then the client panel calls `/api/admin/users`; PATCHes go
+  through RLS (`current_access_level() = 1` on `profiles`), the real gate.
 
 ## Testing
 

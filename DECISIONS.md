@@ -2,6 +2,84 @@
 
 Decisions recorded in reverse chronological order.
 
+## 2026-08-16 — Auth + approval app side (opencode)
+
+1. **App side layered on the existing DB work**: migrations 0012 (approval flow: `profiles.status`
+   pending/approved/rejected, `handle_new_user` → pending, backfill → approved; approval gate inside
+   `get_content_item` + the educational_content tier policy; tier spread 10/25/50/100 across the 135
+   imported items) and 0013 (public items stay open to anonymous visitors) were already written — this
+   session only built the UI/API on top. No DB migration needed.
+2. **Auth is Supabase email+password with cookie sessions** via `@/lib/supabase` in route handlers —
+   no magic links, no client-side `signInWithPassword` (cookies belong to the server). The client only
+   reads the session for the header via `@/lib/supabase/client` (RLS applies).
+3. **Owner-only enforcement is layered**: the admin UI is hidden behind a server-component check
+   (`access_level = 1` + approved), the API re-checks the session server-side, and the DB RLS update
+   policy (`current_access_level() = 1` on `profiles`) is the hard gate that actually blocks writes.
+   The route returns 403 for non-owners rather than 404 (this is an admin surface, existence is not a
+   secret), unlike the content-detail 404 (anti-enumeration) choice.
+4. **`/admin` redirects to `/login` when signed out** and renders "Access denied" for non-owners —
+   the page URL itself is not sensitive, so no 404 discovery-masking here.
+5. **Login stays visible to everyone** (the site is public; the *access* is what the owner gates):
+   pendings see a notice with the owner email ("login is enabled only after the owner's approval").
+6. **`LockedSection` now shows the owner email visibly** ("Contact with owner: <email>") — the mailto
+   target uses the item's `owner_contact` when present, else the canonical
+   `ravikisan1814@gmail.com`; the *displayed* email follows the same rule (no mismatch between what is
+   shown and the mailto target).
+7. **`.btn`/`.btn-primary`/`.btn-secondary` were referenced by components but never defined** in
+   `globals.css` — all those buttons (locked-section CTAs, content cards) rendered with no styling.
+   They are now defined in the shared section and remain theme-var driven (light + `html.dark`).
+8. **Header nav lost "Pricing" (`/#upgrade`) and gained "Rules & Notices" (`/info`)** — no E2E test
+   asserted the header nav links (verified before editing).
+9. **`process.env[name]` dynamic reads are not inlined by Next.js in browser bundles** — found when
+   the header's new `createClient()` call made the whole site render the Next error page (78/90 E2E
+   red). Fixed in `lib/supabase/client.ts` by hoisting to literal `process.env.NEXT_PUBLIC_*` reads
+   (statically analyzable → inlined). Rule: any env the browser must see goes through a literal key
+   read; keep dynamic lookups server-side only.
+
+## 2026-08-15 — Key rotation + grants lockdown + full content import (opencode)
+
+1. **Secret key was in the public slot**: `.env.local` had `sb_secret_…` (SECRET) in `NEXT_PUBLIC_SUPABASE_ANON_KEY` — such values are inlined into the browser bundle on Netlify. Any visitor could have read every locked payload. Fixed by rotating the anon slot to the real publishable key and moving the secret to `SUPABASE_SERVICE_ROLE_KEY` (local only). SECURITY.md should note the posture: public bundle must only ever contain the publishable key.
+2. **Blanket grants were the second hole**: the old live schema granted everything to anon/authenticated at the table level; column-level grants only take effect once the table-level grants are revoked. `0010` revokes all and re-grants exactly the canonical column sets (0003/0004/0005 semantics with REVOKE included). After it, locked_payload/variants/file_url/body_markdown and profiles are 401 for anonymous.
+3. **PostgREST cache must be reloaded manually after GRANT/REVOKE**: Supabase's DDL watch trigger only fires for CREATE/ALTER/DROP, so a `notify pgrst, 'reload schema';` step is required after any pure-grant migration (educational_content appeared fixed earlier only because ALTER TABLE statements had triggered a reload).
+4. **Real content is imported & public by design**: `migrate-content.mjs` (135 files) upserts everything at `access_level = 4`. All 135 topics + 135 content items now live in the hierarchy. If any content must be sold, tiers are an owner-only SQL update per row — deliberately not auto-assigned.
+5. **Legacy columns are dropped, not papered over**: `topics.title` (NOT NULL, dead — app reads `name`) blocked all inserts; dropped via `0011` rather than adding a default, keeping the live schema equal to the canonical migration chain.
+
+## 2026-08-15 — Live-DB repair + ContentGrid wiring + test fixes (opencode)
+
+1. **Live DB was repaired instead of re-seeded**: the drift (`topics.title` instead of `name`, missing
+   `sort_order`/`updated_at`/`description`/`get_content_item`/`categories`, `locked_payload` jsonb,
+   duplicate rows) came from migrations 0001–0004 never being applied to a hand-built older schema.
+   Fixed with idempotent migrations **0005–0008** pasted into the dashboard SQL editor — no destructive
+   drops, no re-migration, safe to re-run (guarded `if not exists` / DO blocks / `on conflict do nothing`).
+2. **Migrations go through the user's dashboard** (project `tsvbksfegvdjwczzfdcx`): no supabase CLI and no
+   `SUPABASE_SERVICE_ROLE_KEY` locally; all verification is read-only anon REST probing (harmless) +
+   in-app endpoint checks.
+3. **`locked_payload` normalized to `text`** (canonical `0004` type). The jsonb→text guard checks
+   `information_schema` `data_type in ('json','jsonb')` and unwraps JSON-string payloads via `#>> '{}'`.
+4. **Demo fallback only fires on fetch error**: `ContentGrid` shows FALLBACK demo data only when
+   `/api/contents` throws; a 200 with an empty list renders a genuinely empty grid. Hence
+   `responsive-layout.spec.ts` mocks `/api/contents` in `beforeEach` — the suite must not depend on the
+   live DB being populated (consistent with 2026-08-11 decision #3).
+5. **Corrected a false assumption**: `/` serves the home page (hero "Master every subject with premium
+   study material") — NOT a permanent redirect to `/catalog`. The footer is reachable on `/`. The
+   `responsive-layout.spec` was updated to assert the home hero, and `getByText("EduPlatform")` needs
+   `.first()` (strict mode).
+6. **`ContentCard` masking is plain text**, `"[Content URL hidden — requires access]"` — no emoji
+   (repo-wide no-emoji convention); tests assert substring `"Content URL hidden"`.
+7. **Tablet header compacts at ≤1023px** (icon buttons, profile menu, Upgrade pill hidden; nav inline at
+   768 as tests demand) — fixes the 137px overflow found at 768px.
+8. **The fork repo squats port 3100**: before any Playwright run, kill all `node` processes and confirm
+   the served page's CSS hash matches the local build, otherwise tests run against the wrong server.
+
+## 2026-08-15 — Enhanced visuals with free MIT libs (opencode)
+
+1. **Only free (MIT) visualization libs added**: `@microlink/react-json-view` (NOT the abandoned `react-json-view` — unmaintained since 2021), `plotly.js-dist-min` (official prebuilt bundle, 0 runtime deps), and `three`. All license-checked; nothing requires payment.
+2. **Heavy engines are lazy-loaded, never part of first paint**: every engine is imported via `next/dynamic`/dynamic `import()` with `ssr:false` and only mounted after the user opens a `VizPanel`. Verified: first-load JS unchanged (~107 kB); Plotly (~4.4 MB raw / ~1.1 MB gzip) and three.js (~725 KB raw / ~200 KB gzip) arrive on demand. JSON viewer chunk ~116 KB.
+3. **Plotly used without `react-plotly.js`**: that wrapper's peer range predates React 19; a ~40-line wrapper component around `plotly.js-dist-min` (newPlot/purge lifecycle) avoids the peer-dep conflict and keeps types via `@types/plotly.js-dist-min`.
+4. **JSON inspection never becomes a leak vector**: the JSON panels render only the API response objects; the DB (RLS + column grants) already nulls tier-gated payloads for under-tier users, so the viewer can only display what the client is allowed to hold (defense in depth unchanged).
+5. **Fixed pre-existing dark-mode cascade bug** (`html.dark` selector): the trailing `@media (prefers-color-scheme: light){:root{...}}` block overrode `.dark` because both match `<html>` with equal specificity and the media block appears later in the file; raising the toggle selector to `html.dark` restores class-based theming (matches DECISION 2026-08-11 #4's hand-rolled theme system).
+6. **Pre-existing red tests documented, not silently fixed**: ContentGrid-based `/catalog` specs and the live-DB schema drift (`topics.name` missing) reproduce on a fully clean checkout; noted in AGENT_STATUS/TASKS as owner decisions.
+
 ## 2026-08-11 — Schema refactor + Vitest (opencode)
 
 1. **Canonical schema** (user-approved refactor): `users` → `profiles` (id, email, role default 'member', access_level default 4); `contents` → `educational_content` (id, title, description, file_url, access_level 1-4, owner_contact). Implemented as migration `0003` (rename + RLS recreation), keeping the migration chain append-only.

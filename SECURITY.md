@@ -45,6 +45,27 @@ in the server-only handling of secrets.
   mapped to 502/503 without leaking internals.
 - `lib/supabase-admin.ts` imports `server-only` so the service role key can
   never be bundled into client code.
+- `POST /api/auth/signin|signup|signout` — email+password via Supabase Auth
+  (cookie sessions, server-side client). Signup always reports the pending
+  approval state; no profile row is ever written from the client (the
+  `handle_new_user` trigger owns creation).
+- `GET|PATCH /api/admin/users` — owner-only (route checks the session +
+  `access_level = 1` + `status = 'approved'`; the RLS update policy
+  `current_access_level() = 1` is the hard gate). 401 unsigned / 403
+  non-owner; input validated (`status` ∈ pending/approved/rejected,
+  `access_level` ∈ 1-4).
+
+## Approval gate (`profiles.status`)
+- Migrations 0012/0013: new signups start `status = 'pending'` (trigger
+  `handle_new_user`); existing users backfilled `approved`.
+- Tier gates fail closed for non-approved users: `get_content_item` and the
+  `educational_content` full-content policy require an approved profile for
+  levels 1-3. Level-4 (Public) items stay open to everyone, including
+  anonymous visitors (0013).
+- `profiles` grants (0012): `select` on (id, email, role, access_level,
+  status, created_at) and `update` on (access_level, status) for
+  `authenticated`, still row-gated by the owner-only RLS policy
+  (`current_access_level() = 1`).
 
 ## Unit-tested invariants
 `lib/access.ts` (the TS mirror of the RLS predicate) is covered by Vitest:
@@ -57,6 +78,30 @@ anonymous fail-closed behavior, and level validation.
 - Only `NEXT_PUBLIC_*` values are safe to expose.
 
 ## Incident log
+### 2026-08-15 — Secret key used as the anon key + blanket table grants (RESOLVED)
+- `.env.local` had a **`sb_secret_…` (SECRET) key in the `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+  slot**. `NEXT_PUBLIC_*` values are inlined into the public browser bundle, so the
+  secret was downloadable by any visitor — full database access via REST.
+- Independently, the live DB (older schema generation) still had **blanket table-level
+  grants** (`grant all … to anon, authenticated`) on `content_items` /
+  `educational_content` / `profiles`, so even the correct publishable key could read
+  `locked_payload`, `variants`, `file_url` and `body_markdown` directly.
+- Remediation:
+  1. Anon slot replaced with the real **publishable key**; secret moved to
+     `SUPABASE_SERVICE_ROLE_KEY` (`.env.local`, gitignored).
+  2. Migration `supabase/migrations/0010_remove_blanket_grants.sql`: `revoke all` from
+     anon/authenticated on all 9 public tables, re-granted exactly the canonical
+     column sets (`file_url`/`body_markdown` → authenticated only; `profiles` →
+     authenticated only).
+  3. `notify pgrst, 'reload schema';` — PostgREST does not reload its schema cache
+     for GRANT/REVOKE (only CREATE/ALTER/DROP), so a manual reload was required.
+  4. Verified: anon REST reads of `locked_payload`/`variants`/`file_url`/
+     `body_markdown`/`profiles` → 401; metadata + hierarchy → 200.
+- **Action required by owner:** rotate the leaked secret key in the Supabase
+  dashboard (the `sb_secret_otLX…` value was pasted into this chat session and has
+  been in the browser bundle since deployment). Generate a new secret key and update
+  `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`.
+
 ### 2026-08-12 — Supabase secret key blocked by GitHub push protection
 - A real Supabase secret key was committed in `.env.local` in a local commit
   (`6beb1b56`, "Deploying platform to Vercel"). GitHub push protection
