@@ -2,9 +2,11 @@
  * Migration script: imports JSON content from the ravikishan project
  * (../ravikishan/migrated-content) into this platform's Supabase database.
  *
+ * Target: academic-core exam group (pre-seeded by migration 0004).
+ *
  * Folder structure -> hierarchy mapping:
- *   class-11|class-11e|class-12  -> exam_groups (class-11e can map to class-11)
- *   chemistry|physics|...         -> subjects
+ *   class-11|class-11e|class-12  -> source folders (all merged into academic-core)
+ *   chemistry|physics|...         -> subjects (matched to existing subjects)
  *   unit-2-stoichiometry|...      -> chapters
  *   concepts|sets|examples|...    -> sub_chapters (content type)
  *   NN-name.json                  -> topics + content_items
@@ -16,8 +18,8 @@
  *   NEXT_PUBLIC_SUPABASE_URL
  *   SUPABASE_SERVICE_ROLE_KEY
  *   MIGRATE_SOURCE_DIR       (optional, defaults to ../ravikishan/migrated-content)
- *   MIGRATE_TARGET_EXAM_GROUP  (optional, default class-11 — Class 11 Notes track)
- *   MIGRATE_SOURCE_CLASSES     (optional, comma-separated, default class-11,class-11e)
+ *   MIGRATE_TARGET_EXAM_GROUP (optional, default academic-core)
+ *   MIGRATE_SOURCE_CLASSES   (optional, comma-separated, default class-11,class-11e,class-12)
  */
 import { createClient } from "@supabase/supabase-js";
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
@@ -48,20 +50,31 @@ const SUPABASE_URL = env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_ROLE_KEY = env.SUPABASE_SERVICE_ROLE_KEY;
 const SOURCE_DIR = env.MIGRATE_SOURCE_DIR ?? join(projectRoot, "..", "ravikishan", "migrated-content");
 const TARGET_EXAM_GROUP = env.MIGRATE_TARGET_EXAM_GROUP ?? "class-11";
-const SOURCE_CLASSES = (env.MIGRATE_SOURCE_CLASSES ?? "class-11,class-11e")
+const SOURCE_CLASSES = (env.MIGRATE_SOURCE_CLASSES ?? "class-11,class-11e,class-12")
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
 
-/** NEB core subjects — seeded under the target exam group even when no JSON exists yet. */
-const CORE_SUBJECTS = [
-  { slug: "biology", name: "Biology", description: "Life sciences, cell biology, genetics, and ecology." },
-  { slug: "chemistry", name: "Chemistry", description: "Physical, organic, and inorganic chemistry." },
-  { slug: "english", name: "English", description: "Grammar, literature, and composition." },
-  { slug: "mathematics", name: "Mathematics", description: "Algebra, calculus, geometry, and statistics." },
-  { slug: "nepali", name: "Nepali", description: "Nepali language, literature, and grammar." },
-  { slug: "physics", name: "Physics", description: "Mechanics, waves, electricity, and modern physics." },
-];
+const SUBJECT_MAP = {
+  physics: "physics",
+  chemistry: "chemistry",
+  mathematics: "mathematics",
+  biology: "biology",
+  english: "english",
+  nepali: "nepali",
+  "computer-science": "computer-science",
+};
+
+const TYPE_LABELS = {
+  concepts: "Concepts",
+  sets: "Practice Sets",
+  examples: "Worked Examples",
+  formula: "Formulas",
+  mindmap: "Mind Map",
+  notes: "Quick Notes",
+  pyqs: "Past Year Questions",
+  graph: "Graphs",
+};
 
 if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
   console.error("Missing required env vars. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.");
@@ -114,8 +127,6 @@ function buildTeaser(title, notes) {
   return `<p>${clean}${clean.length >= 200 ? "…" : ""}</p>`;
 }
 
-const TYPE_LABELS = { concepts: "Concepts", sets: "Practice Sets", examples: "Worked Examples", formula: "Formulas", mindmap: "Mind Map", notes: "Quick Notes", pyqs: "Past Year Questions", graph: "Graphs" };
-
 // 3. Hierarchy upsert helpers
 async function upsert(table, row, conflict) {
   const { data, error } = await admin.from(table).upsert(row, { onConflict: conflict }).select("id").single();
@@ -123,37 +134,34 @@ async function upsert(table, row, conflict) {
   return data.id;
 }
 
-async function upsertWithTitleFallback(table, row, conflict) {
-  try {
-    return await upsert(table, row, conflict);
-  } catch (err) {
-    const msg = err.message ?? "";
-    if (msg.includes("column") && msg.includes("does not exist")) {
-      const { title, ...rest } = row;
-      return await upsert(table, rest, conflict);
-    }
-    throw err;
-  }
+async function getExamGroupId(slug) {
+  const { data, error } = await admin.from("exam_groups").select("id").eq("slug", slug).maybeSingle();
+  if (error) throw new Error(`Failed to fetch exam group ${slug}: ${error.message}`);
+  return data?.id ?? null;
 }
 
-async function ensureCoreSubjects(examGroupId, classLabel) {
-  let seeded = 0;
-  for (let i = 0; i < CORE_SUBJECTS.length; i++) {
-    const subject = CORE_SUBJECTS[i];
-    await upsert(
-      "subjects",
-      {
-        exam_group_id: examGroupId,
-        slug: subject.slug,
-        name: subject.name,
-        description: `${subject.description} (${classLabel}).`,
-        sort_order: i + 1,
-      },
-      "exam_group_id,slug"
-    );
-    seeded++;
-  }
-  return seeded;
+async function getSubjectId(examGroupId, slug) {
+  const { data, error } = await admin.from("subjects").select("id").eq("exam_group_id", examGroupId).eq("slug", slug).maybeSingle();
+  if (error) throw new Error(`Failed to fetch subject ${slug}: ${error.message}`);
+  return data?.id ?? null;
+}
+
+async function getChapterId(subjectId, slug) {
+  const { data, error } = await admin.from("chapters").select("id").eq("subject_id", subjectId).eq("slug", slug).maybeSingle();
+  if (error) throw new Error(`Failed to fetch chapter ${slug}: ${error.message}`);
+  return data?.id ?? null;
+}
+
+async function getSubChapterId(chapterId, slug) {
+  const { data, error } = await admin.from("sub_chapters").select("id").eq("chapter_id", chapterId).eq("slug", slug).maybeSingle();
+  if (error) throw new Error(`Failed to fetch sub-chapter ${slug}: ${error.message}`);
+  return data?.id ?? null;
+}
+
+async function getTopicId(subChapterId, slug) {
+  const { data, error } = await admin.from("topics").select("id").eq("sub_chapter_id", subChapterId).eq("slug", slug).maybeSingle();
+  if (error) throw new Error(`Failed to fetch topic ${slug}: ${error.message}`);
+  return data?.id ?? null;
 }
 
 async function main() {
@@ -163,12 +171,19 @@ async function main() {
   console.log(`Source classes: ${SOURCE_CLASSES.join(", ")}`);
   console.log(`Supabase: ${SUPABASE_URL}\n`);
 
+  const examGroupId = await getExamGroupId(TARGET_EXAM_GROUP);
+  if (!examGroupId) {
+    console.error(`Exam group "${TARGET_EXAM_GROUP}" not found. Seed it first via migrations.`);
+    process.exit(1);
+  }
+  console.log(`Target exam group id: ${examGroupId}`);
+
   const jsonFiles = collectJsonFiles(SOURCE_DIR);
   console.log(`Found ${jsonFiles.length} JSON files total.\n`);
 
-  const stats = { examGroups: 0, subjects: 0, chapters: 0, subChapters: 0, topics: 0, contentItems: 0, skipped: 0, errors: [] };
+  const stats = { subjects: 0, chapters: 0, subChapters: 0, topics: 0, contentItems: 0, skipped: 0, errors: [] };
 
-  // Group files: class -> subject -> unit -> type -> files
+  // Group files: sourceClass -> subject -> unit -> type -> files
   const groups = new Map();
   for (const file of jsonFiles) {
     const rel = relative(SOURCE_DIR, file);
@@ -176,107 +191,63 @@ async function main() {
     if (parts.length < 5) { console.warn(`  SKIP (unexpected depth): ${rel}`); stats.skipped++; continue; }
     const [classSlug, subjectSlug, unitSlug, typeSlug, fileName] = parts;
     if (!SOURCE_CLASSES.includes(classSlug)) continue;
-    const targetClass = TARGET_EXAM_GROUP;
-    if (!groups.has(targetClass)) groups.set(targetClass, { name: targetClass, subjects: new Map() });
-    const cls = groups.get(targetClass);
-    if (!cls.subjects.has(subjectSlug)) cls.subjects.set(subjectSlug, { name: subjectSlug, units: new Map() });
-    const subj = cls.subjects.get(subjectSlug);
-    if (!subj.units.has(unitSlug)) subj.units.set(unitSlug, { name: unitSlug, types: new Map() });
+    const mappedSubject = SUBJECT_MAP[subjectSlug];
+    if (!mappedSubject) { console.warn(`  SKIP (unknown subject): ${rel}`); stats.skipped++; continue; }
+    if (!groups.has(mappedSubject)) groups.set(mappedSubject, { units: new Map() });
+    const subj = groups.get(mappedSubject);
+    if (!subj.units.has(unitSlug)) subj.units.set(unitSlug, { types: new Map() });
     const unit = subj.units.get(unitSlug);
     if (!unit.types.has(typeSlug)) unit.types.set(typeSlug, []);
     unit.types.get(typeSlug).push({ file, fileName, rel, sourceClass: classSlug });
   }
 
-  if (groups.size === 0) {
-    groups.set(TARGET_EXAM_GROUP, { name: TARGET_EXAM_GROUP, subjects: new Map() });
-  }
+  for (const [subjectSlug, subj] of groups) {
+    const subjectId = await getSubjectId(examGroupId, subjectSlug);
+    if (!subjectId) {
+      console.warn(`  SKIP (subject not found in ${TARGET_EXAM_GROUP}): ${subjectSlug}`);
+      stats.skipped++;
+      continue;
+    }
+    stats.subjects++;
+    console.log(`\n[Subject] ${subjectSlug}`);
 
-  for (const [classSlug, cls] of groups) {
-    const classLabel = classSlug === "class-11" ? "Class 11 Notes" : classSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-    const examGroupId = await upsert(
-      "exam_groups",
-      {
-        slug: classSlug,
-        name: classLabel,
-        description: `${classLabel} curriculum content.`,
-        sort_order: classSlug === "class-11" ? 1 : classSlug === "class-11e" ? 2 : 3,
-      },
-      "slug"
-    );
-    stats.examGroups++;
-    console.log(`\n[Exam Group] ${classLabel}`);
+    for (const [unitSlug, unit] of subj.units) {
+      const chapterSlug = unitSlug;
+      const chapterName = unitSlug.replace(/^unit-\d+-/, "").replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+      const chapterId = await getChapterId(subjectId, chapterSlug) || await upsert("chapters", { subject_id: subjectId, slug: chapterSlug, name: chapterName, description: `${chapterName} — ${subjectSlug}.`, sort_order: 0 }, "subject_id,slug");
+      stats.chapters++;
+      console.log(`  [Chapter] ${chapterName}`);
 
-    const coreCount = await ensureCoreSubjects(examGroupId, classLabel);
-    stats.subjects += coreCount;
-    console.log(`  [Subjects] Seeded ${coreCount} core subjects (biology, chemistry, english, mathematics, nepali, physics)`);
+      for (const [typeSlug, files] of unit.types) {
+        const typeLabel = TYPE_LABELS[typeSlug] ?? typeSlug;
+        const subChapterId = await getSubChapterId(chapterId, typeSlug) || await upsert("sub_chapters", { chapter_id: chapterId, slug: typeSlug, name: typeLabel, description: `${typeLabel} for ${chapterName}.`, sort_order: 0 }, "chapter_id,slug");
+        stats.subChapters++;
+        console.log(`    [Sub-Chapter] ${typeLabel}`);
 
-    let subjectOrder = CORE_SUBJECTS.length;
-    for (const [subjectSlug, subj] of cls.subjects) {
-      const core = CORE_SUBJECTS.find((s) => s.slug === subjectSlug);
-      const subjectLabel = core?.name ?? subjectSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-      subjectOrder++;
-      const subjectId = await upsert(
-        "subjects",
-        {
-          exam_group_id: examGroupId,
-          slug: subjectSlug,
-          name: subjectLabel,
-          description: core?.description ?? `${subjectLabel} for ${classLabel}.`,
-          sort_order: core ? CORE_SUBJECTS.indexOf(core) + 1 : subjectOrder,
-        },
-        "exam_group_id,slug"
-      );
-      if (!core) {
-        stats.subjects++;
-        console.log(`  [Subject] ${subjectLabel} (extra)`);
-      } else {
-        console.log(`  [Subject] ${subjectLabel}`);
-      }
+        for (const { file, fileName, rel } of files) {
+          try {
+            const raw = JSON.parse(readFileSync(file, "utf8"));
+            const title = raw.title ?? basename(fileName, ".json");
+            const notes = Array.isArray(raw.notes) ? raw.notes : [];
+            const topicSlug = slugify(basename(fileName, ".json"));
+            const topicName = title.length > 80 ? title.slice(0, 80) + "…" : title;
 
-      let chapterOrder = 0;
-      for (const [unitSlug, unit] of subj.units) {
-        chapterOrder++;
-        const chapterLabel = unitSlug.replace(/^unit-\d+-/, "").replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-        const chapterId = await upsert("chapters", { subject_id: subjectId, slug: unitSlug, name: chapterLabel, description: `${chapterLabel} — ${subjectLabel} unit.`, sort_order: chapterOrder }, "subject_id,slug");
-        stats.chapters++;
-        console.log(`    [Chapter] ${chapterLabel}`);
+            const topicId = await getTopicId(subChapterId, topicSlug) || await upsert("topics", { sub_chapter_id: subChapterId, slug: topicSlug, name: topicName, description: null, sort_order: 0 }, "sub_chapter_id,slug");
+            stats.topics++;
 
-        let typeOrder = 0;
-        for (const [typeSlug, files] of unit.types) {
-          typeOrder++;
-          const typeLabel = TYPE_LABELS[typeSlug] ?? typeSlug;
-          const subChapterId = await upsert("sub_chapters", { chapter_id: chapterId, slug: typeSlug, name: typeLabel, description: `${typeLabel} for ${chapterLabel}.`, sort_order: typeOrder }, "chapter_id,slug");
-          stats.subChapters++;
-          console.log(`      [Sub-Chapter] ${typeLabel}`);
+            const payload = notesToHtml(title, notes);
+            const teaser = buildTeaser(title, notes);
+            const variants = [];
+            if (raw.latex) variants.push({ label: "LaTeX", interface: "latex", content: `<h3>${title} — LaTeX</h3>${notes.map((n) => `<p>${n}</p>`).join("")}` });
+            if (raw.year || raw.examSource) variants.push({ label: "Exam Info", interface: "exam", content: `<h3>${title} — Exam Info</h3><p>Year: ${raw.year ?? "N/A"}<br/>Source: ${raw.examSource ?? "N/A"}</p>` });
+            if (raw.graph) variants.push({ label: "Graph", interface: "graph", content: `<h3>${title} — Graph</h3><pre>${JSON.stringify(raw.graph, null, 2)}</pre>` });
 
-          let topicOrder = 0;
-          for (const { file, fileName, rel } of files) {
-            topicOrder++;
-            try {
-              const raw = JSON.parse(readFileSync(file, "utf8"));
-              const title = raw.title ?? basename(fileName, ".json");
-              const notes = Array.isArray(raw.notes) ? raw.notes : [];
-              const topicSlug = slugify(basename(fileName, ".json"));
-              const topicName = title.length > 80 ? title.slice(0, 80) + "…" : title;
-
-              const topicRow = { sub_chapter_id: subChapterId, slug: topicSlug, name: topicName, description: null, sort_order: topicOrder };
-              const topicId = await upsertWithTitleFallback("topics", topicRow, "sub_chapter_id,slug");
-              stats.topics++;
-
-              const payload = notesToHtml(title, notes);
-              const teaser = buildTeaser(title, notes);
-              const variants = [];
-              if (raw.latex) variants.push({ label: "LaTeX", interface: "latex", content: `<h3>${title} — LaTeX</h3>${notes.map((n) => `<p>${n}</p>`).join("")}` });
-              if (raw.year || raw.examSource) variants.push({ label: "Exam Info", interface: "exam", content: `<h3>${title} — Exam Info</h3><p>Year: ${raw.year ?? "N/A"}<br/>Source: ${raw.examSource ?? "N/A"}</p>` });
-              if (raw.graph) variants.push({ label: "Graph", interface: "graph", content: `<h3>${title} — Graph</h3><pre>${JSON.stringify(raw.graph, null, 2)}</pre>` });
-
-              await upsert("content_items", { topic_id: topicId, title, access_level: 4, owner_contact: "ravikisan1814@gmail.com", public_teaser: teaser, locked_payload: payload, variants }, "topic_id,title");
-              stats.contentItems++;
-              console.log(`        [Topic] ${topicName}`);
-            } catch (err) {
-              stats.errors.push(`${rel}: ${err.message}`);
-              console.error(`        ERROR ${rel}: ${err.message}`);
-            }
+            await upsert("content_items", { topic_id: topicId, title, access_level: 4, owner_contact: "ravikisan1814@gmail.com", public_teaser: teaser, locked_payload: payload, variants }, "topic_id,title");
+            stats.contentItems++;
+            console.log(`      [Topic] ${topicName}`);
+          } catch (err) {
+            stats.errors.push(`${rel}: ${err.message}`);
+            console.error(`      ERROR ${rel}: ${err.message}`);
           }
         }
       }
@@ -284,7 +255,6 @@ async function main() {
   }
 
   console.log(`\n=== Migration Summary ===`);
-  console.log(`Exam groups:   ${stats.examGroups}`);
   console.log(`Subjects:      ${stats.subjects}`);
   console.log(`Chapters:      ${stats.chapters}`);
   console.log(`Sub-chapters:  ${stats.subChapters}`);
