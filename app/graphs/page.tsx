@@ -59,8 +59,8 @@ export default function GraphsPage() {
               <article key={subject.slug} className="note-card">
                 <h3 className="note-card-title">{subject.label}</h3>
                 <div className="note-card-teaser">
-                  {subject.figures.map((fig) => (
-                    <div key={fig.key} className="graph-row">
+                  {subject.figures.map((fig, index) => (
+                    <div key={`${fig.key}-${index}`} className="graph-row">
                       <span className="graph-label">{fig.label}</span>
                       <ThreeScene figureType={fig.key} topicTitle={`${subject.label} — ${fig.label}`} />
                     </div>
