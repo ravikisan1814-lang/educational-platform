@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import {TopicContentView} from "@/components/TopicContentView";
-import type { ContentItem } from "@/lib/types";
+import type { ContentItemDetail } from "@/lib/types";
 
 interface Params {
   examGroupSlug: string;
@@ -24,7 +24,6 @@ export default async function CatalogTopicPage({
     topicSlug,
   } = await params;
 
-  // Fetch the topic by slug, including its hierarchy context
   const supabase = await createClient();
 
   const { data: topic, error: topicError } = await supabase
@@ -39,41 +38,34 @@ export default async function CatalogTopicPage({
     notFound();
   }
 
-  // Fetch content items for this topic
   const { data: contentItems, error: contentError } = await supabase
     .from("content_items")
     .select(
-      "id, topic_id, title, access_level, owner_contact, public_teaser, locked_payload, variants"
+      "id, topic_id, title, access_level, owner_contact, public_teaser"
     )
-    .eq("topic_id", topic.id);
+    .eq("topic_id", topic.id)
+    .order("sort_order", { ascending: true });
 
-  if (contentError) {
+  if (contentError || !contentItems || contentItems.length === 0) {
     notFound();
   }
 
-  // Determine user access level
-  let userAccessLevel = 4; // Anonymous = Public tier
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("access_level")
-      .eq("id", user.id)
-      .maybeSingle();
-    if (profile?.access_level) {
-      userAccessLevel = profile.access_level;
-    }
+  const firstItem = contentItems[0];
+
+  const { data: rpcResult, error: rpcError } = await supabase.rpc(
+    "get_content_item",
+    { p_item_id: firstItem.id }
+  );
+
+  if (rpcError || !rpcResult) {
+    notFound();
   }
 
-  // Get the first content item (or could render multiple)
-  const contentItem = (contentItems as ContentItem[])[0] || null;
+  const detail = rpcResult as unknown as ContentItemDetail;
 
   return (
     <div className="page-shell">
-      <TopicContentView
-        content={contentItem}
-        userAccessLevel={userAccessLevel}
-      />
+      <TopicContentView content={detail} userAccessLevel={detail.access_level} />
     </div>
   );
 }

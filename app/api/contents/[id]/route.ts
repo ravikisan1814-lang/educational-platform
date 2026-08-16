@@ -4,15 +4,6 @@ import type { AccessLevel } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-/**
- * GET /api/contents/[id]
- *
- * Returns FULL content (file_url, owner_contact) — server-side, RLS-gated.
- * The database itself enforces `access_level >= user.access_level` on the
- * educational_content table, so an unauthorized request simply matches no
- * rows and returns 404. Public (4) users cannot retrieve raw Level 1/2/3
- * content.
- */
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -20,14 +11,6 @@ export async function GET(
   const { id } = await params;
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json(
-      { error: "Authentication required" },
-      { status: 401 }
-    );
-  }
-
   const { data, error } = await supabase
     .from("educational_content")
     .select(
@@ -37,7 +20,6 @@ export async function GET(
     .maybeSingle();
 
   if (error || !data) {
-    // Same response for "does not exist" and "insufficient tier" — no leak.
     return NextResponse.json(
       { error: "Not found or insufficient access level" },
       { status: 404 }
@@ -56,6 +38,16 @@ export async function GET(
     updated_at: string;
     categories: { slug: string; name: string } | null;
   };
+
+  if ((row.access_level as number) < 4) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+  }
 
   return NextResponse.json({
     data: {
