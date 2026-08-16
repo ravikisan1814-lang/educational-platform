@@ -176,11 +176,7 @@ export default function SiteHeader() {
           <span className="header-pending" title="Owner approval required before full access">
             Pending approval
           </span>
-        ) : (
-          <Link href="/login" className="btn-signin">
-            Login
-          </Link>
-        )}
+        ) : null}
         <button
           type="button"
           className="hamburger"
