@@ -60,7 +60,6 @@ export const DASHBOARD_PILLARS: DashboardPillar[] = [
 
 export const DASHBOARD_VIEWS = [
   { id: "home", label: "Home", icon: "🏠" },
-  { id: "notes", label: "Notes", icon: "📝" },
   { id: "syllabus", label: "Syllabus", icon: "📚" },
   { id: "favorites", label: "Favorites", icon: "⭐" },
   { id: "recent", label: "Recent", icon: "🕐" },

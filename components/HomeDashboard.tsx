@@ -131,27 +131,6 @@ export default function HomeDashboard({ view, onChangeView }: HomeDashboardProps
         </div>
       )}
 
-      {view === "notes" && (
-        <div className="dash-notes">
-          <h2 className="dash-view-title">All Notes</h2>
-          <p className="dash-view-sub">Browse published notes across every class and subject.</p>
-          <div className="dash-notes-grid">
-            {DASHBOARD_PILLARS.flatMap((pillar) =>
-              pillar.tracks.map((track) => (
-                <Link
-                  key={track.examGroupSlug}
-                  href={trackLearnHref(track)}
-                  className="dash-note-card"
-                >
-                  <span className="dash-note-pillar">{pillar.title}</span>
-                  <span className="dash-note-track">{track.label}</span>
-                </Link>
-              ))
-            )}
-          </div>
-        </div>
-      )}
-
       {view === "syllabus" && (
         <div className="dash-syllabus">
           <h2 className="dash-view-title">Syllabus Overview</h2>
