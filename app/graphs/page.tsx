@@ -19,7 +19,7 @@ const SUBJECTS = [
       { key: "trajectory", label: "Circular motion / centripetal acceleration" },
       { key: "vectorfield", label: "Electric / magnetic field lines" },
       { key: "wave", label: "Wave superposition / interference" },
-      { key: "abstract", label: "Simple harmonic motion" },
+      { key: "shm", label: "Simple harmonic motion" },
     ],
   },
   {
@@ -30,7 +30,7 @@ const SUBJECTS = [
       { key: "molecular", label: "Crystal lattice structure" },
       { key: "molecular", label: "Atomic orbitals (s, p, d)" },
       { key: "barchart", label: "Periodic trends / comparisons" },
-      { key: "abstract", label: "Chemical bonding model" },
+      { key: "bonding", label: "Chemical bonding model" },
     ],
   },
   {
@@ -41,7 +41,7 @@ const SUBJECTS = [
       { key: "trajectory", label: "Hyperboloid / saddle surface" },
       { key: "barchart", label: "Vector addition in 3D" },
       { key: "wave", label: "Spiral / helix curve" },
-      { key: "abstract", label: "Coordinate axes and octants" },
+      { key: "coordinate", label: "Coordinate axes and octants" },
     ],
   },
 ];

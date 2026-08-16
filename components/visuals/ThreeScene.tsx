@@ -8,10 +8,12 @@ const CAMERA_PRESETS: Record<string, [number, number, number]> = {
   circular: [3, 3, 4],
   vectorfield: [5, 3, 5],
   wave: [3, 2.5, 5],
-  abstract: [3.5, 2.5, 5],
+  shm: [4, 2, 5],
   molecular: [3.5, 2.5, 4],
   barchart: [4, 3, 5],
   coordinate: [4, 3, 5],
+  bonding: [3.5, 2.5, 5],
+  abstract: [3.5, 2.5, 5],
 };
 
 function getCameraPosition(figureType: string, topicTitle: string | undefined): [number, number, number] {
@@ -22,17 +24,17 @@ function getCameraPosition(figureType: string, topicTitle: string | undefined): 
   if (title.includes("circular") || title.includes("centripetal")) return [0, 2.8, 4.5];
   if (title.includes("electric") || title.includes("magnetic") || title.includes("field")) return [5, 4, 5];
   if (title.includes("superposition") || title.includes("interference")) return [3.5, 2, 5.5];
-  if (title.includes("harmonic")) return [4, 2, 5];
+  if (key === "shm" || title.includes("harmonic")) return [4, 2, 5];
   if (title.includes("vsepr") || title.includes("molecular geometry")) return [3.5, 2.5, 4.5];
   if (title.includes("crystal") || title.includes("lattice")) return [5, 4, 5];
   if (title.includes("orbital") || title.includes("atomic")) return [3, 2.5, 4.5];
   if (title.includes("periodic") || title.includes("trends")) return [4, 3, 5];
-  if (title.includes("bonding")) return [3.5, 2.5, 5];
+  if (key === "bonding" || title.includes("bonding")) return [3.5, 2.5, 5];
   if (title.includes("parabola") || title.includes("conic")) return [4, 2.5, 5];
   if (title.includes("hyperboloid") || title.includes("saddle")) return [3.5, 2.5, 5.5];
   if (title.includes("vector") && key === "barchart") return [4.5, 2.5, 5];
   if (title.includes("spiral") || title.includes("helix")) return [4, 3, 4.5];
-  if (title.includes("coordinate") || title.includes("octant")) return [4.5, 3.5, 4.5];
+  if (key === "coordinate" || title.includes("coordinate") || title.includes("octant")) return [4.5, 3.5, 4.5];
 
   return CAMERA_PRESETS[key] ?? CAMERA_PRESETS.abstract;
 }
@@ -45,22 +47,26 @@ function getSceneConfig(figureType: string, topicTitle: string | undefined) {
   if (title.includes("circular") || title.includes("centripetal")) return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.4 };
   if (title.includes("electric") || title.includes("magnetic") || title.includes("field")) return { background: 0x020617, autoRotate: true, rotateSpeed: 0.25 };
   if (title.includes("superposition") || title.includes("interference")) return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.3 };
-  if (title.includes("harmonic")) return { background: 0x0f172a, autoRotate: false, rotateSpeed: 0 };
+  if (key === "shm" || title.includes("harmonic") || title.includes("simple harmonic")) return { background: 0x0f172a, autoRotate: false, rotateSpeed: 0 };
   if (title.includes("vsepr") || title.includes("molecular geometry")) return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.5 };
   if (title.includes("crystal") || title.includes("lattice")) return { background: 0x020617, autoRotate: true, rotateSpeed: 0.35 };
   if (title.includes("orbital") || title.includes("atomic")) return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.45 };
   if (title.includes("periodic") || title.includes("trends")) return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.2 };
-  if (title.includes("bonding")) return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.4 };
+  if (key === "bonding" || title.includes("bonding")) return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.4 };
   if (title.includes("parabola") || title.includes("conic")) return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.35 };
   if (title.includes("hyperboloid") || title.includes("saddle")) return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.4 };
   if (title.includes("vector") && key === "barchart") return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.3 };
   if (title.includes("spiral") || title.includes("helix")) return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.5 };
-  if (title.includes("coordinate") || title.includes("octant")) return { background: 0x020617, autoRotate: true, rotateSpeed: 0.2 };
+  if (key === "coordinate" || title.includes("coordinate") || title.includes("octant")) return { background: 0x020617, autoRotate: true, rotateSpeed: 0.2 };
 
   if (key === "trajectory") return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.3 };
   if (key === "molecular") return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.5 };
   if (key === "wave") return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.3 };
   if (key === "vectorfield") return { background: 0x020617, autoRotate: true, rotateSpeed: 0.25 };
+  if (key === "barchart") return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.2 };
+  if (key === "shm") return { background: 0x0f172a, autoRotate: false, rotateSpeed: 0 };
+  if (key === "bonding") return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.4 };
+  if (key === "coordinate") return { background: 0x020617, autoRotate: true, rotateSpeed: 0.2 };
   return { background: 0x0f172a, autoRotate: true, rotateSpeed: 0.3 };
 }
 
@@ -243,23 +249,23 @@ export default function ThreeScene({ className, figureType = "abstract", topicTi
         buildVectorFieldScene(THREE, scene, title, animatables, params);
       } else if (key === "wave" || title.includes("wave") || title.includes("superposition") || title.includes("interference") || title.includes("oscillation") || title.includes("spiral") || title.includes("helix")) {
         buildWaveScene(THREE, scene, title, animatables, params);
-      } else if (title.includes("harmonic") || title.includes("simple harmonic")) {
+      } else if (key === "shm" || title.includes("harmonic") || title.includes("simple harmonic")) {
         buildSHMScene(THREE, scene, animatables, params);
-      } else if (key === "molecular" || title.includes("molecular") || title.includes("orbital") || title.includes("vsepr") || title.includes("crystal") || title.includes("lattice") || title.includes("bonding")) {
+      } else if (key === "molecular" || title.includes("molecular") || title.includes("orbital") || title.includes("vsepr") || title.includes("crystal") || title.includes("lattice") || key === "bonding" || title.includes("bonding")) {
         if (title.includes("vsepr") || title.includes("molecular geometry")) {
           buildVSEPRScene(THREE, scene, animatables, params);
         } else if (title.includes("crystal") || title.includes("lattice")) {
           buildCrystalLatticeScene(THREE, scene, animatables, params);
         } else if (title.includes("orbital") || title.includes("atomic")) {
           buildOrbitalScene(THREE, scene, title, animatables, params);
-        } else if (title.includes("bonding")) {
+        } else if (key === "bonding" || title.includes("bonding")) {
           buildBondingScene(THREE, scene, animatables, params);
         } else {
           buildMolecularScene(THREE, scene, animatables, params);
         }
       } else if (key === "barchart" || title.includes("bar") || title.includes("chart") || title.includes("comparison") || title.includes("periodic") || title.includes("trends")) {
         buildComparisonScene(THREE, scene, animatables, params);
-      } else if (title.includes("coordinate") || title.includes("octant")) {
+      } else if (key === "coordinate" || title.includes("coordinate") || title.includes("octant")) {
         buildCoordinateScene(THREE, scene, params);
       } else if (title.includes("hyperboloid") || title.includes("saddle")) {
         buildHyperboloidScene(THREE, scene, animatables, params);

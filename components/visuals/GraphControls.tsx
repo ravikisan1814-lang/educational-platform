@@ -93,7 +93,7 @@ export function GraphControls({ figureKey, label, params, onChange }: { figureKe
     );
   }
 
-  if (label.toLowerCase().includes("simple harmonic")) {
+  if (figureKey === "shm" || label.toLowerCase().includes("harmonic")) {
     return (
       <div className="graph-controls">
         <div className="graph-control">
@@ -156,7 +156,7 @@ export function GraphControls({ figureKey, label, params, onChange }: { figureKe
     );
   }
 
-  if (label.toLowerCase().includes("chemical bonding")) {
+  if (figureKey === "bonding" || label.toLowerCase().includes("chemical bonding")) {
     return (
       <div className="graph-controls">
         <div className="graph-control">
