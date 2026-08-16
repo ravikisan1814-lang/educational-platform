@@ -1,10 +1,9 @@
 import SiteHeader from "@/components/SiteHeader";
-import HierarchyExplorer from "@/components/learn/HierarchyExplorer";
+import SimpleHierarchy from "@/components/learn/SimpleHierarchy";
 
 export const metadata = {
-  title: "Learn — Syllabus Explorer | EduPlatform",
-  description:
-    "Explore the full syllabus map. Every cover is open — only the 90% in-content notes are tier-gated.",
+  title: "Learn — Notes | Ravikisan's Platform",
+  description: "Browse subjects and notes for this exam group.",
 };
 
 export default async function LearnGroupPage({
@@ -19,16 +18,12 @@ export default async function LearnGroupPage({
       <SiteHeader />
       <main>
         <section className="hero hero-premium">
-          <span className="hero-badge">Deep Learning Map</span>
-          <h1>Explore the syllabus freely</h1>
-          <p>
-            Exam Group → Subject → Chapter → Sub-Chapter → Topic. All titles,
-            cards and covers are open to everyone. Open any topic to read the
-            10% public concept — the 90% notes are tier-gated inside.
-          </p>
+          <span className="hero-badge">Notes</span>
+          <h1>{group.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}</h1>
+          <p>Pick a subject to view its chapters and notes.</p>
         </section>
         <section className="content-section">
-          <HierarchyExplorer initialGroupSlug={group} />
+          <SimpleHierarchy path={[group]} />
         </section>
       </main>
     </div>

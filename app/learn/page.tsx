@@ -1,10 +1,10 @@
 import SiteHeader from "@/components/SiteHeader";
-import HierarchyExplorer from "@/components/learn/HierarchyExplorer";
+import SimpleHierarchy from "@/components/learn/SimpleHierarchy";
 
 export const metadata = {
-  title: "Learn — Syllabus Explorer | EduPlatform",
+  title: "Learn — Notes | Ravikisan's Platform",
   description:
-    "Explore the full syllabus map: Loksewa, General Knowledge and Academic Core. Every cover is open — only the 90% in-content notes are tier-gated.",
+    "Browse Class 11, Class 11e and Class 12 notes organized by subject.",
 };
 
 export default function LearnPage() {
@@ -13,16 +13,12 @@ export default function LearnPage() {
       <SiteHeader />
       <main>
         <section className="hero hero-premium">
-          <span className="hero-badge">Deep Learning Map</span>
-          <h1>Explore the syllabus freely</h1>
-          <p>
-            Exam Group → Subject → Chapter → Sub-Chapter → Topic. All titles,
-            cards and covers are open to everyone. Open any topic to read the
-            10% public concept — the 90% notes are tier-gated inside.
-          </p>
+          <span className="hero-badge">Notes</span>
+          <h1>Select a subject</h1>
+          <p>Pick an exam group to browse its subjects and notes.</p>
         </section>
         <section className="content-section">
-          <HierarchyExplorer />
+          <SimpleHierarchy />
         </section>
       </main>
     </div>

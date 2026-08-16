@@ -602,143 +602,60 @@ main {
   margin: 0 auto 1.25rem;
 }
 
-/* ------------------------------------------------------- syllabus explorer */
+/* ------------------------------------------------------- learn notes list */
 
-.explorer {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 1.5rem;
-  align-items: start;
+.simple-hierarchy {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
-.explorer-sidebar {
-  position: sticky;
-  top: 4.5rem;
-  max-height: calc(100dvh - 5.5rem);
-  overflow-y: auto;
-  padding: 1rem;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-}
-
-.explorer-sidebar-title {
-  margin: 0 0 0.75rem;
-  font-size: 0.95rem;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.explorer-content {
-  min-width: 0;
-}
-
-.explorer-heading {
-  margin: 0 0 0.25rem;
+.simple-hierarchy-title {
+  margin: 0;
   font-size: clamp(1.2rem, 3vw, 1.6rem);
 }
 
-.explorer-sub {
-  margin: 0 0 1.25rem;
+.simple-hierarchy-desc {
+  margin: 0 0 0.75rem;
   color: var(--muted);
 }
 
-.explorer-empty {
-  color: var(--muted);
-}
-
-/* sidebar nav */
-.nav-group,
-.nav-subject,
-.nav-chapter,
-.nav-sub-chapter {
-  margin-bottom: 0.15rem;
-}
-
-.nav-group-toggle,
-.nav-subject-toggle,
-.nav-chapter-toggle,
-.nav-sub-chapter-toggle {
-  width: 100%;
+.notes-list {
   display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.5rem;
-  background: transparent;
-  border: none;
-  border-radius: 6px;
-  color: var(--fg);
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-align: left;
-  cursor: pointer;
-}
-
-.nav-group-toggle:hover,
-.nav-subject-toggle:hover,
-.nav-chapter-toggle:hover,
-.nav-sub-chapter-toggle:hover {
-  background: var(--bg);
-}
-
-.nav-caret {
-  display: inline-flex;
-  width: 0.85rem;
-  color: var(--muted);
-  flex-shrink: 0;
-}
-
-.nav-group-children,
-.nav-subject,
-.nav-chapter,
-.nav-sub-chapter {
-  padding-left: 0.75rem;
-}
-
-.nav-subject-toggle,
-.nav-chapter-toggle,
-.nav-sub-chapter-toggle {
-  font-weight: 500;
-  font-size: 0.85rem;
-}
-
-.nav-topic {
-  padding: 0.3rem 0.5rem 0.3rem 1.25rem;
-  font-size: 0.82rem;
-  color: var(--muted);
-}
-
-.nav-topic-name {
-  display: inline-block;
-}
-
-/* topic cards */
-.topic-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  flex-direction: column;
   gap: 1rem;
 }
 
-.topic-card {
+.note-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
   gap: 0.6rem;
 }
 
-.topic-card-meta {
+.note-card-title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.note-card-teaser {
+  color: var(--fg);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.note-card-teaser p {
+  margin: 0 0 0.6rem;
+}
+
+.note-card-meta {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
-}
-
-.topic-card-count {
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.btn-sm {
-  padding: 0.35rem 0.7rem;
-  font-size: 0.82rem;
+  gap: 0.75rem;
 }
 
 /* ---------------------------------------------------------------- chat */
