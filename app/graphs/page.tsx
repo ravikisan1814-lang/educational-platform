@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import dynamic from "next/dynamic";
+import { GraphControls } from "@/components/visuals/GraphControls";
+import type { SceneParams } from "@/components/visuals/ThreeScene";
 
 const ThreeScene = dynamic(() => import("@/components/visuals/ThreeScene"), {
   ssr: false,
@@ -44,6 +47,13 @@ const SUBJECTS = [
 ];
 
 export default function GraphsPage() {
+  const [figureParams, setFigureParams] = useState<Record<string, SceneParams>>({});
+
+  const updateParams = (subjectSlug: string, figureIndex: number, next: SceneParams) => {
+    const key = `${subjectSlug}-${figureIndex}`;
+    setFigureParams((prev) => ({ ...prev, [key]: next }));
+  };
+
   return (
     <div className="page-shell">
       <SiteHeader />
@@ -51,7 +61,7 @@ export default function GraphsPage() {
         <section className="hero hero-premium">
           <span className="hero-badge">Graphs &amp; Figures</span>
           <h1>Subject-wise figures</h1>
-          <p>Pick a subject to preview the 3D figure styles used in notes.</p>
+          <p>Adjust the sliders to see how each concept responds to changes in variables.</p>
         </section>
         <section className="content-section">
           <div className="notes-list">
@@ -59,12 +69,17 @@ export default function GraphsPage() {
               <article key={subject.slug} className="note-card">
                 <h3 className="note-card-title">{subject.label}</h3>
                 <div className="note-card-teaser">
-                  {subject.figures.map((fig, index) => (
-                    <div key={`${fig.key}-${index}`} className="graph-row">
-                      <span className="graph-label">{fig.label}</span>
-                      <ThreeScene figureType={fig.key} topicTitle={`${subject.label} — ${fig.label}`} />
-                    </div>
-                  ))}
+                  {subject.figures.map((fig, index) => {
+                    const key = `${subject.slug}-${index}`;
+                    const params = figureParams[key] ?? {};
+                    return (
+                      <div key={`${fig.key}-${index}`} className="graph-row">
+                        <span className="graph-label">{fig.label}</span>
+                        <GraphControls figureKey={fig.key} label={fig.label} params={params} onChange={(next) => updateParams(subject.slug, index, next)} />
+                        <ThreeScene figureType={fig.key} topicTitle={`${subject.label} — ${fig.label}`} params={params} />
+                      </div>
+                    );
+                  })}
                 </div>
               </article>
             ))}

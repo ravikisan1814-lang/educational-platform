@@ -684,6 +684,36 @@ main {
   letter-spacing: 0.05em;
 }
 
+.graph-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.graph-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.graph-control label {
+  min-width: 7.5rem;
+  font-weight: 600;
+}
+
+.graph-control input[type="range"] {
+  width: 9rem;
+}
+
+.graph-control span {
+  min-width: 2.5rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 .note-card-meta {
   display: flex;
   align-items: center;
@@ -997,10 +1027,38 @@ main {
     var(--bg);
   border: 1px solid var(--border);
   cursor: grab;
+  position: relative;
 }
 
 .three-scene:active {
   cursor: grabbing;
+}
+
+.three-scene-label {
+  position: absolute;
+  left: 0.75rem;
+  bottom: 0.75rem;
+  max-width: calc(100% - 1.5rem);
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.72);
+  color: #e2e8f0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  user-select: none;
+  text-wrap: balance;
+}
+
+.three-scene-label[data-sub]::after {
+  content: attr(data-sub);
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #cbd5e1;
+  margin-top: 0.15rem;
+  letter-spacing: 0.02em;
 }
 
 .json-inspector {
