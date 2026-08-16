@@ -1866,9 +1866,37 @@ main {
   transition: border-color 0.15s, transform 0.15s;
 }
 
+.dash-note-card--active {
+  border-color: #facc15;
+  background: #fefce8;
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px #facc15;
+}
+
 .dash-note-card:hover {
   border-color: var(--accent);
   transform: translateY(-1px);
+}
+
+.dash-notes--active {
+  border: 2px solid #facc15;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fffbeb;
+}
+
+.dash-syllabus--active {
+  border: 2px solid #facc15;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fffbeb;
+}
+
+.dash-coming--active {
+  border: 2px solid #facc15;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fffbeb;
 }
 
 .dash-note-pillar {
@@ -1884,9 +1912,15 @@ main {
 }
 
 .dash-note-track {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--fg);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.4;
+  background: #ffffff;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  align-self: flex-start;
 }
 
 .dash-syllabus {

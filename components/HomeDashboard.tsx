@@ -105,6 +105,8 @@ function ComingSoon({ label }: { label: string }) {
 }
 
 export default function HomeDashboard({ view, onChangeView }: HomeDashboardProps) {
+  const [activeTrack, setActiveTrack] = useState<string | null>(null);
+
   return (
     <div className="home-dashboard">
       <div className="dash-switcher" role="tablist" aria-label="Dashboard views">
@@ -132,37 +134,54 @@ export default function HomeDashboard({ view, onChangeView }: HomeDashboardProps
       )}
 
       {view === "notes" && (
-        <div className="dash-notes">
+        <div className="dash-notes dash-notes--active">
           <h2 className="dash-view-title">All Notes</h2>
           <p className="dash-view-sub">Browse published notes across every class and subject.</p>
           <div className="dash-notes-grid">
             {DASHBOARD_PILLARS.flatMap((pillar) =>
-              pillar.tracks.map((track) => (
-                <Link
-                  key={track.examGroupSlug}
-                  href={trackLearnHref(track)}
-                  className="dash-note-card"
-                >
-                  <span className="dash-note-pillar">{pillar.title}</span>
-                  <span className="dash-note-track">{track.label}</span>
-                </Link>
-              ))
+              pillar.tracks.map((track) => {
+                const href = trackLearnHref(track);
+                const isActive = activeTrack === href;
+                return (
+                  <Link
+                    key={track.examGroupSlug}
+                    href={href}
+                    className={`dash-note-card${isActive ? " dash-note-card--active" : ""}`}
+                    onClick={() => setActiveTrack(href)}
+                  >
+                    <span className="dash-note-pillar">{pillar.title}</span>
+                    <span className="dash-note-track">{track.label}</span>
+                  </Link>
+                );
+              })
             )}
           </div>
         </div>
       )}
 
       {view === "syllabus" && (
-        <div className="dash-syllabus">
+        <div className="dash-syllabus dash-syllabus--active">
           <h2 className="dash-view-title">Syllabus Overview</h2>
           <p className="dash-view-sub">Exam group → subject → chapter → topic map.</p>
           <Link href="/learn" className="btn btn-primary">Open syllabus explorer</Link>
         </div>
       )}
 
-      {view === "favorites" && <ComingSoon label="Favorites" />}
-      {view === "recent" && <ComingSoon label="Recent" />}
-      {view === "official" && <ComingSoon label="Official notes" />}
+      {view === "favorites" && (
+        <div className="dash-coming dash-coming--active">
+          <ComingSoon label="Favorites" />
+        </div>
+      )}
+      {view === "recent" && (
+        <div className="dash-coming dash-coming--active">
+          <ComingSoon label="Recent" />
+        </div>
+      )}
+      {view === "official" && (
+        <div className="dash-coming dash-coming--active">
+          <ComingSoon label="Official notes" />
+        </div>
+      )}
     </div>
   );
 }
