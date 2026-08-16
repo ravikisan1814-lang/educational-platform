@@ -634,11 +634,29 @@ main {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.note-card:hover {
+  border-color: #facc15;
+  background: #fefce8;
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px #facc15;
+}
+
+.note-card:active {
+  transform: translateY(0);
+  box-shadow: 0 0 0 2px #facc15;
 }
 
 .note-card-title {
   margin: 0;
   font-size: 1.05rem;
+  color: #0f172a;
+}
+
+.note-card:hover .note-card-title {
+  color: #0f172a;
 }
 
 .note-card-teaser {
