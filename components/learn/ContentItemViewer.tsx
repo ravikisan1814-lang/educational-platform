@@ -5,7 +5,6 @@ import Link from "next/link";
 import VariantTabs from "./VariantTabs";
 import LockedSection from "./LockedSection";
 import VizPanel from "@/components/visuals/VizPanel";
-import JsonInspector from "@/components/visuals/JsonInspector";
 import ThreeScene from "@/components/visuals/ThreeScene";
 import type { ContentItemDetail, BreadcrumbEntry, ExamGroupNode } from "@/lib/types";
 import { ACCESS_LEVEL_LABELS } from "@/lib/types";
@@ -218,9 +217,6 @@ export default function ContentItemViewer({
       </article>
 
       <section className="visuals-stack" aria-label="Interactive visuals">
-        <VizPanel title="Raw note data (JSON)" defaultOpen={false}>
-          <JsonInspector data={detail} title="Note data — raw JSON" collapsed={2} />
-        </VizPanel>
         <VizPanel
           title={`Graph / figure: ${figureLabel} (${figureIndex + 1}/${figures.length})`}
           actions={

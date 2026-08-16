@@ -118,6 +118,9 @@ export default function SiteHeader() {
             {link.label}
           </Link>
         ))}
+        <Link href="/graphs" className="nav-link">
+          Graphs
+        </Link>
         {!loading && !approved && !pending && (
           <Link href="/login" className="nav-link nav-link-login">
             Login
