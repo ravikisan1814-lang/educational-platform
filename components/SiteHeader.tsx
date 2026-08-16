@@ -17,6 +17,8 @@ const NAV_LINKS = [
   { href: "/info", label: "Rules & Notices" },
 ];
 
+const OWNER_NAV_LINK = { href: "/admin", label: "Admin" };
+
 interface SessionUser {
   id: string;
   email: string;
@@ -118,6 +120,11 @@ export default function SiteHeader() {
             {link.label}
           </Link>
         ))}
+        {isOwner && (
+          <Link href={OWNER_NAV_LINK.href} className="nav-link nav-link-admin">
+            {OWNER_NAV_LINK.label}
+          </Link>
+        )}
         <Link href="/graphs" className="nav-link">
           Graphs
         </Link>
