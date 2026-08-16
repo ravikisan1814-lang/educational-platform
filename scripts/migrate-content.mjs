@@ -123,6 +123,19 @@ async function upsert(table, row, conflict) {
   return data.id;
 }
 
+async function upsertWithTitleFallback(table, row, conflict) {
+  try {
+    return await upsert(table, row, conflict);
+  } catch (err) {
+    const msg = err.message ?? "";
+    if (msg.includes("column") && msg.includes("does not exist")) {
+      const { title, ...rest } = row;
+      return await upsert(table, rest, conflict);
+    }
+    throw err;
+  }
+}
+
 async function ensureCoreSubjects(examGroupId, classLabel) {
   let seeded = 0;
   for (let i = 0; i < CORE_SUBJECTS.length; i++) {
@@ -246,7 +259,8 @@ async function main() {
               const topicSlug = slugify(basename(fileName, ".json"));
               const topicName = title.length > 80 ? title.slice(0, 80) + "…" : title;
 
-              const topicId = await upsert("topics", { sub_chapter_id: subChapterId, slug: topicSlug, name: topicName, description: null, sort_order: topicOrder }, "sub_chapter_id,slug");
+              const topicRow = { sub_chapter_id: subChapterId, slug: topicSlug, name: topicName, description: null, sort_order: topicOrder };
+              const topicId = await upsertWithTitleFallback("topics", topicRow, "sub_chapter_id,slug");
               stats.topics++;
 
               const payload = notesToHtml(title, notes);
