@@ -59,12 +59,7 @@ export default function InfoPage() {
   return (
     <div className="info-page">
       <section className="info-hero">
-        <p className="info-eyebrow">EduPlatform — How this website works</p>
-        <h1>The rules and official notices</h1>
-        <p className="info-hero-text">
-          Read before signing in: how access works and the official notices of
-          this platform. Login is enabled only after the owner&apos;s approval.
-        </p>
+        <h1>Officials rules and notices are updated here</h1>
       </section>
 
       <section className="info-section">
