@@ -91,7 +91,6 @@ export default function SiteFooter() {
 
         <nav className="footer-nav" aria-label="Footer">
           <Link href="/">Home</Link>
-          <Link href="/learn">Learn</Link>
           <Link href={`mailto:${OWNER_EMAIL}`}>Contact</Link>
         </nav>
       </div>
