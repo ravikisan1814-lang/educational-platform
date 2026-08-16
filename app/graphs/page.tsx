@@ -1,7 +1,6 @@
 "use client";
 
 import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
 import dynamic from "next/dynamic";
 
 const ThreeScene = dynamic(() => import("@/components/visuals/ThreeScene"), {
