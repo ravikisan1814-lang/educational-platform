@@ -916,8 +916,14 @@ main {
   overflow: hidden;
 }
 
+.viz-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
 .viz-panel-toggle {
-  width: 100%;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -929,6 +935,8 @@ main {
   font-weight: 600;
   text-align: left;
   cursor: pointer;
+  flex: 1;
+  min-width: 0;
 }
 
 .viz-panel-toggle:hover {
@@ -939,6 +947,20 @@ main {
   display: inline-flex;
   width: 0.85rem;
   color: var(--muted);
+  flex-shrink: 0;
+}
+
+.viz-panel-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.viz-panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-right: 1rem;
   flex-shrink: 0;
 }
 

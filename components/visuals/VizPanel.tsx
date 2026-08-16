@@ -27,16 +27,18 @@ export default function VizPanel({
 
   return (
     <div className="viz-panel" data-testid={testId}>
-      <button
-        type="button"
-        className="viz-panel-toggle"
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-      >
-        <span className="viz-panel-caret">{open ? "▾" : "▸"}</span>
-        {title}
+      <div className="viz-panel-header">
+        <button
+          type="button"
+          className="viz-panel-toggle"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <span className="viz-panel-caret">{open ? "▾" : "▸"}</span>
+          <span className="viz-panel-title">{title}</span>
+        </button>
         {actions ? <span className="viz-panel-actions">{actions}</span> : null}
-      </button>
+      </div>
       {open && <div className="viz-panel-body">{children}</div>}
     </div>
   );
