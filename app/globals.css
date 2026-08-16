@@ -1866,16 +1866,21 @@ main {
   transition: border-color 0.15s, transform 0.15s;
 }
 
-.dash-note-card--active {
+.dash-note-card:hover {
   border-color: #facc15;
   background: #fefce8;
   transform: translateY(-1px);
   box-shadow: 0 0 0 1px #facc15;
 }
 
-.dash-note-card:hover {
-  border-color: var(--accent);
-  transform: translateY(-1px);
+.dash-note-card:hover .dash-note-pillar {
+  background: #eab308;
+  color: #ffffff;
+}
+
+.dash-note-card:active {
+  transform: translateY(0);
+  box-shadow: 0 0 0 2px #facc15;
 }
 
 .dash-notes--active {

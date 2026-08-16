@@ -105,8 +105,6 @@ function ComingSoon({ label }: { label: string }) {
 }
 
 export default function HomeDashboard({ view, onChangeView }: HomeDashboardProps) {
-  const [activeTrack, setActiveTrack] = useState<string | null>(null);
-
   return (
     <div className="home-dashboard">
       <div className="dash-switcher" role="tablist" aria-label="Dashboard views">
@@ -139,21 +137,16 @@ export default function HomeDashboard({ view, onChangeView }: HomeDashboardProps
           <p className="dash-view-sub">Browse published notes across every class and subject.</p>
           <div className="dash-notes-grid">
             {DASHBOARD_PILLARS.flatMap((pillar) =>
-              pillar.tracks.map((track) => {
-                const href = trackLearnHref(track);
-                const isActive = activeTrack === href;
-                return (
-                  <Link
-                    key={track.examGroupSlug}
-                    href={href}
-                    className={`dash-note-card${isActive ? " dash-note-card--active" : ""}`}
-                    onClick={() => setActiveTrack(href)}
-                  >
-                    <span className="dash-note-pillar">{pillar.title}</span>
-                    <span className="dash-note-track">{track.label}</span>
-                  </Link>
-                );
-              })
+              pillar.tracks.map((track) => (
+                <Link
+                  key={track.examGroupSlug}
+                  href={trackLearnHref(track)}
+                  className="dash-note-card"
+                >
+                  <span className="dash-note-pillar">{pillar.title}</span>
+                  <span className="dash-note-track">{track.label}</span>
+                </Link>
+              ))
             )}
           </div>
         </div>
@@ -179,7 +172,22 @@ export default function HomeDashboard({ view, onChangeView }: HomeDashboardProps
       )}
       {view === "official" && (
         <div className="dash-coming dash-coming--active">
-          <ComingSoon label="Official notes" />
+          <h2 className="dash-view-title">Official</h2>
+          <p className="dash-view-sub">Exam-ready material curated from official sources.</p>
+          <div className="dash-notes-grid">
+            <Link href="/learn" className="dash-note-card">
+              <span className="dash-note-pillar">Official</span>
+              <span className="dash-note-track">Model questions box</span>
+            </Link>
+            <Link href="/learn" className="dash-note-card">
+              <span className="dash-note-pillar">Official</span>
+              <span className="dash-note-track">Solutions of official questions</span>
+            </Link>
+            <Link href="/learn" className="dash-note-card">
+              <span className="dash-note-pillar">Official</span>
+              <span className="dash-note-track">Formulas (derived)</span>
+            </Link>
+          </div>
         </div>
       )}
     </div>
