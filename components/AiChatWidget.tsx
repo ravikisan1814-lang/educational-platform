@@ -2,15 +2,42 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
 }
 
+const VISITOR_LIMIT = 2;
+
+function cleanAiText(text: string): string {
+  const links: string[] = [];
+  let preserved = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match) => {
+    links.push(match);
+    return `__LINK_${links.length - 1}__`;
+  });
+
+  preserved = preserved
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/\*\*/g, "")
+    .replace(/\*/g, "")
+    .replace(/^[-*]\s+/gm, "")
+    .replace(/^\d+\.\s+/gm, "")
+    .replace(/```/g, "")
+    .replace(/`/g, "")
+    .replace(/~~/g, "")
+    .replace(/^>\s+/gm, "");
+
+  preserved = preserved.replace(/__LINK_(\d+)__/g, (_, i) => links[Number(i)]);
+
+  return preserved.trim();
+}
+
 /** Turn markdown [text](/path) into clickable Next.js links. */
 function renderContent(text: string) {
-  const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
+  const cleaned = cleanAiText(text);
+  const parts = cleaned.split(/(\[[^\]]+\]\([^)]+\))/g);
   return parts.map((part, i) => {
     const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
     if (match) {
@@ -37,23 +64,47 @@ export default function AiChatWidget() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
-      content:
-        "Hi! I can help you find syllabus topics, notes, and study material on Ravikisan's Platform. Ask me about Class 11, Class 12, or Knowledge sections.",
+      content: cleanAiText(
+        "Hi! I can help you find syllabus topics, notes, and study material on Ravikisan's Platform. Ask me about Class 11, Class 12, or Knowledge sections."
+      ),
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [visitorCount, setVisitorCount] = useState(0);
+  const [limitReached, setLimitReached] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
+  useEffect(() => {
+    if (!open) return;
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setLimitReached(false);
+      }
+    });
+  }, [open]);
+
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
     const text = input.trim();
     if (!text || loading) return;
+
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      const nextCount = visitorCount + 1;
+      setVisitorCount(nextCount);
+      if (nextCount >= VISITOR_LIMIT) {
+        setLimitReached(true);
+      }
+    }
 
     const nextMessages: ChatMessage[] = [...messages, { role: "user", content: text }];
     setMessages(nextMessages);
@@ -73,7 +124,7 @@ export default function AiChatWidget() {
       }
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: json.data.content as string },
+        { role: "assistant", content: cleanAiText(json.data.content as string) },
       ]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not reach AI");
@@ -81,6 +132,8 @@ export default function AiChatWidget() {
       setLoading(false);
     }
   }
+
+  const disabled = loading || !input.trim() || (!limitReached && visitorCount >= VISITOR_LIMIT);
 
   return (
     <div className={`ai-chat-widget${open ? " ai-chat-widget--open" : ""}`}>
@@ -106,6 +159,14 @@ export default function AiChatWidget() {
                 {renderContent(msg.content)}
               </div>
             ))}
+            {limitReached && (
+              <div className="ai-chat-bubble ai-chat-bubble--assistant">
+                <p>You have reached the free trial limit of {VISITOR_LIMIT} messages.</p>
+                <p>
+                  <Link href="/login" className="ai-chat-link">Sign in</Link> to continue using the assistant.
+                </p>
+              </div>
+            )}
             {loading && (
               <div className="ai-chat-bubble ai-chat-bubble--assistant ai-chat-typing">
                 Thinking…
@@ -118,12 +179,12 @@ export default function AiChatWidget() {
             <input
               type="text"
               className="ai-chat-input"
-              placeholder="Ask about syllabus or notes…"
+              placeholder={limitReached ? "Sign in to continue chatting…" : "Ask about syllabus or notes…"}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              disabled={loading}
+              disabled={loading || limitReached}
             />
-            <button type="submit" className="btn btn-primary" disabled={loading || !input.trim()}>
+            <button type="submit" className="btn btn-primary" disabled={disabled}>
               Send
             </button>
           </form>

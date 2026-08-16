@@ -12,6 +12,11 @@ import {
   type DashboardViewId,
 } from "@/lib/dashboard-structure";
 
+interface HomeDashboardProps {
+  view: DashboardViewId;
+  onChangeView: (view: DashboardViewId) => void;
+}
+
 function TrackBlock({ track }: { track: DashboardTrack }) {
   const [open, setOpen] = useState(false);
 
@@ -99,9 +104,7 @@ function ComingSoon({ label }: { label: string }) {
   );
 }
 
-export default function HomeDashboard() {
-  const [view, setView] = useState<DashboardViewId>("home");
-
+export default function HomeDashboard({ view, onChangeView }: HomeDashboardProps) {
   return (
     <div className="home-dashboard">
       <div className="dash-switcher" role="tablist" aria-label="Dashboard views">
@@ -112,7 +115,7 @@ export default function HomeDashboard() {
             role="tab"
             aria-selected={view === item.id}
             className={`dash-switch${view === item.id ? " dash-switch--active" : ""}`}
-            onClick={() => setView(item.id)}
+            onClick={() => onChangeView(item.id)}
           >
             <span aria-hidden="true">{item.icon}</span>
             <span>{item.label}</span>

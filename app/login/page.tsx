@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<{ kind: "error" | "info"; text: string } | null>(
     null
@@ -113,15 +114,25 @@ export default function LoginPage() {
           </label>
           <label className="auth-field">
             <span>Password</span>
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-              minLength={6}
-              autoComplete={mode === "signin" ? "current-password" : "new-password"}
-              placeholder="••••••••"
-            />
+            <div className="auth-field-input-wrap">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+                minLength={6}
+                autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                className="auth-field-eye"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowPassword((v) => !v)}
+              >
+                {showPassword ? "😢" : "😊"}
+              </button>
+            </div>
           </label>
           <button type="submit" className="btn btn-primary auth-submit" disabled={busy}>
             {busy

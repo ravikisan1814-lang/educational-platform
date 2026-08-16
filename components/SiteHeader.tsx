@@ -118,6 +118,11 @@ export default function SiteHeader() {
             {link.label}
           </Link>
         ))}
+        {!loading && !approved && !pending && (
+          <Link href="/login" className="nav-link nav-link-login">
+            Login
+          </Link>
+        )}
       </nav>
 
       <div className="header-actions">
@@ -170,7 +175,7 @@ export default function SiteHeader() {
           </span>
         ) : (
           <Link href="/login" className="btn-signin">
-            Sign in
+            Login
           </Link>
         )}
         <button

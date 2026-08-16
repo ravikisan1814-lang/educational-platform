@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
@@ -48,14 +50,10 @@ export default function SiteFooter() {
     <footer className="site-footer site-footer-rich">
       <div className="footer-inner">
         <p className="footer-made-with">
-          Made with curiosity by{" "}
-          <a href={`mailto:${OWNER_EMAIL}`} className="footer-glow-link">
-            Ravikisan
-          </a>
+          Made with curiosity by <span className="footer-glow-link">Ravikisan</span>
         </p>
 
         <section className="footer-inspiration" aria-label="Inspiration">
-          <h3 className="footer-inspiration-title">Words to keep you going</h3>
           <div className="footer-inspiration-track">
             <InspirationTicker quotes={INSPIRATION_QUOTES} />
           </div>

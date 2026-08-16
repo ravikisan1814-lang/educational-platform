@@ -75,6 +75,9 @@ export default function GlobalSearch() {
                 }}
               >
                 <span className="global-search-hit-label">{hit.label}</span>
+                {hit.excerpt && (
+                  <span className="global-search-hit-excerpt">{hit.excerpt}</span>
+                )}
                 <span className="global-search-hit-path">{hit.path}</span>
               </Link>
             </li>

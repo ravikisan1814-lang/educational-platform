@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AiChatWidget from "@/components/AiChatWidget";
+import BackButton from "@/components/BackButton";
 
 const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("theme");var d=t?t==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.classList.toggle("dark",d)}catch(e){}})();`;
 
@@ -20,6 +21,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body>
+        <BackButton />
         {children}
         <AiChatWidget />
       </body>

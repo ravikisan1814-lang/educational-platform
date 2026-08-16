@@ -62,62 +62,28 @@ export default function InfoPage() {
         <p className="info-eyebrow">EduPlatform — How this website works</p>
         <h1>The rules and official notices</h1>
         <p className="info-hero-text">
-          Read before signing in: how access works, what the tiers mean, and
-          the official notices of this platform. Login is enabled only after
-          the owner&apos;s approval — contact the owner to get access.
+          Read before signing in: how access works and the official notices of
+          this platform. Login is enabled only after the owner&apos;s approval.
         </p>
-        <a className="btn btn-primary" href={`mailto:${OWNER_EMAIL}`}>
-          Contact owner: {OWNER_EMAIL}
-        </a>
-      </section>
-
-      <section className="info-section">
-        <h2>Access tiers &amp; how much you can read</h2>
-        <div className="info-tiers">
-          {TIERS.map((tier) => (
-            <article key={tier.level} className={`info-tier info-tier-${tier.level}`}>
-              <div className="info-tier-head">
-                <span className="info-tier-name">{tier.name}</span>
-                <span className="info-tier-pct">{tier.visibility} visibility</span>
-              </div>
-              <p>{tier.note}</p>
-            </article>
-          ))}
-        </div>
       </section>
 
       <section className="info-section">
         <h2>Website rules</h2>
-        <ol className="info-rules">
-          {RULES.map((rule) => (
-            <li key={rule}>{rule}</li>
-          ))}
-        </ol>
+        <div className="coming-soon">Coming</div>
       </section>
 
       <section className="info-section">
         <h2>Official notices</h2>
-        <div className="info-notices">
-          {OFFICIAL_NOTICES.map((notice) => (
-            <article key={notice.title} className="info-notice">
-              <span className="info-notice-date">{notice.date}</span>
-              <h3>{notice.title}</h3>
-              <p>{notice.text}</p>
-            </article>
-          ))}
-        </div>
+        <div className="coming-soon">Coming</div>
       </section>
 
       <section className="info-section info-contact">
         <h2>How to get access</h2>
         <p>
-          Your login becomes active only after the owner approves your
-          account. Write to the owner —{" "}
-          <a className="info-email" href={`mailto:${OWNER_EMAIL}`}>
-            {OWNER_EMAIL}
-          </a>{" "}
-          — with your account email and the tier you need (Member / Co-member),
-          then check <Link href="/login">the login page</Link>.
+          Get access via owner. Your login becomes active only after the owner
+          approves your account. Write to the owner with your account email and
+          the tier you need (Member / Co-member), then check{" "}
+          <Link href="/login">the login page</Link>.
         </p>
       </section>
     </div>

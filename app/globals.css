@@ -1133,6 +1133,29 @@ main {
   outline-offset: 1px;
 }
 
+.auth-field-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-field-input-wrap input {
+  padding-right: 2.4rem;
+}
+
+.auth-field-eye {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0.2rem;
+  line-height: 1;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
 .auth-submit {
   margin-top: 0.35rem;
 }
@@ -1566,6 +1589,17 @@ main {
   line-height: 1.3;
 }
 
+.global-search-hit-excerpt {
+  font-size: 0.78rem;
+  color: var(--fg);
+  opacity: 0.85;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .global-search-empty {
   position: absolute;
   top: calc(100% + 0.35rem);
@@ -1840,14 +1874,19 @@ main {
 .dash-note-pillar {
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--accent);
+  color: #ffffff;
+  background: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  align-self: flex-start;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
 }
 
 .dash-note-track {
   font-size: 0.9rem;
   font-weight: 600;
+  color: var(--fg);
 }
 
 .dash-syllabus {
@@ -2103,13 +2142,13 @@ main {
 
 .footer-glow-link {
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
-  transition: text-shadow 0.2s ease;
+  animation: footer-glow 3s ease-in-out infinite;
 }
 
 .footer-glow-link:hover {
-  text-shadow: 0 0 12px color-mix(in srgb, var(--accent) 50%, transparent);
+  text-shadow: 0 0 14px color-mix(in srgb, var(--accent) 60%, transparent);
 }
 
 .footer-glow-text {
@@ -2312,6 +2351,36 @@ main {
   margin: 0;
   font-size: 0.78rem;
   color: #dc2626;
+}
+
+/* ============================================================
+   Global back button
+   ============================================================ */
+.back-button {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 100;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--fg);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: border-color 0.15s, color 0.15s, transform 0.15s;
+}
+
+.back-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
 }
 
 /* ============================================================
