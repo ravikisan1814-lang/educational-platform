@@ -669,6 +669,21 @@ main {
   margin: 0 0 0.6rem;
 }
 
+.graph-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.graph-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .note-card-meta {
   display: flex;
   align-items: center;
