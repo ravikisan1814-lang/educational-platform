@@ -1901,27 +1901,6 @@ main {
   box-shadow: 0 0 0 2px #facc15;
 }
 
-.dash-notes--active {
-  border: 2px solid #facc15;
-  border-radius: 12px;
-  padding: 1rem;
-  background: #fffbeb;
-}
-
-.dash-syllabus--active {
-  border: 2px solid #facc15;
-  border-radius: 12px;
-  padding: 1rem;
-  background: #fffbeb;
-}
-
-.dash-coming--active {
-  border: 2px solid #facc15;
-  border-radius: 12px;
-  padding: 1rem;
-  background: #fffbeb;
-}
-
 .dash-note-pillar {
   font-size: 0.75rem;
   font-weight: 700;
@@ -1946,7 +1925,19 @@ main {
   align-self: flex-start;
 }
 
+.dash-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 .dash-syllabus {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dash-coming {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;

@@ -132,7 +132,7 @@ export default function HomeDashboard({ view, onChangeView }: HomeDashboardProps
       )}
 
       {view === "notes" && (
-        <div className="dash-notes dash-notes--active">
+        <div className="dash-notes">
           <h2 className="dash-view-title">All Notes</h2>
           <p className="dash-view-sub">Browse published notes across every class and subject.</p>
           <div className="dash-notes-grid">
@@ -153,7 +153,7 @@ export default function HomeDashboard({ view, onChangeView }: HomeDashboardProps
       )}
 
       {view === "syllabus" && (
-        <div className="dash-syllabus dash-syllabus--active">
+        <div className="dash-syllabus">
           <h2 className="dash-view-title">Syllabus Overview</h2>
           <p className="dash-view-sub">Exam group → subject → chapter → topic map.</p>
           <Link href="/learn" className="btn btn-primary">Open syllabus explorer</Link>
@@ -161,17 +161,17 @@ export default function HomeDashboard({ view, onChangeView }: HomeDashboardProps
       )}
 
       {view === "favorites" && (
-        <div className="dash-coming dash-coming--active">
+        <div className="dash-coming">
           <ComingSoon label="Favorites" />
         </div>
       )}
       {view === "recent" && (
-        <div className="dash-coming dash-coming--active">
+        <div className="dash-coming">
           <ComingSoon label="Recent" />
         </div>
       )}
       {view === "official" && (
-        <div className="dash-coming dash-coming--active">
+        <div className="dash-coming">
           <h2 className="dash-view-title">Official</h2>
           <p className="dash-view-sub">Exam-ready material curated from official sources.</p>
           <div className="dash-notes-grid">
