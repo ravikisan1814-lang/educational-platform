@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type * as THREE from "three";
+import * as THREE from "three";
 
 /**
  * Interactive 3D demo scene powered by three.js (MIT).
@@ -14,8 +14,32 @@ import type * as THREE from "three";
  * - All GPU/GL resources (geometry, materials, renderer, animation frame,
  *   ResizeObserver) are disposed on unmount.
  */
-export default function ThreeScene({ className }: { className?: string }) {
+export default function ThreeScene({ className, figureType = "abstract", topicTitle }: { className?: string; figureType?: string; topicTitle?: string }) {
   const mountRef = useRef<HTMLDivElement>(null);
+
+  function createFigureGeometry(type: string, title?: string) {
+    const slug = (title ?? type).toLowerCase();
+
+    if (type === "trajectory" || slug.includes("trajectory") || slug.includes("projectile") || slug.includes("graph")) {
+      return new THREE.TorusKnotGeometry(1, 0.28, 180, 20);
+    }
+    if (type === "molecular" || slug.includes("molecular") || slug.includes("molecule") || slug.includes("orbital")) {
+      return new THREE.IcosahedronGeometry(1.1, 2);
+    }
+    if (type === "barchart" || slug.includes("bar") || slug.includes("chart") || slug.includes("comparison")) {
+      return new THREE.BoxGeometry(0.35, 1, 0.35);
+    }
+    if (type === "wave" || slug.includes("wave") || slug.includes("oscillation") || slug.includes("vibration")) {
+      return new THREE.TorusGeometry(1, 0.35, 32, 120);
+    }
+    if (type === "vectorfield" || slug.includes("field") || slug.includes("vector") || slug.includes("force")) {
+      return new THREE.ConeGeometry(0.9, 1.6, 6, 1);
+    }
+    if (type === "cell" || slug.includes("cell") || slug.includes("biology") || slug.includes("life cycle")) {
+      return new THREE.SphereGeometry(1.05, 32, 24);
+    }
+    return new THREE.TorusKnotGeometry(1, 0.32, 160, 24);
+  }
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -54,7 +78,7 @@ export default function ThreeScene({ className }: { className?: string }) {
       controls.minDistance = 2;
       controls.maxDistance = 10;
 
-      const geometry = new THREE.TorusKnotGeometry(1, 0.32, 160, 24);
+      const geometry = createFigureGeometry(figureType, topicTitle);
       const smooth = new THREE.MeshStandardMaterial({
         color: 0x3b82f6,
         metalness: 0.55,

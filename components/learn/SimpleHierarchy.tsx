@@ -5,11 +5,14 @@ import Link from "next/link";
 import type { ExamGroupNode, SubjectNode, ChapterNode, SubChapterNode, TopicNode, ContentItemSummary } from "@/lib/types";
 
 interface SimpleHierarchyProps {
-  /** Path segments after /learn, e.g. ["class-11","chemistry"] */
   path?: string[];
 }
 
 type Node = ExamGroupNode | SubjectNode | ChapterNode | SubChapterNode | TopicNode;
+
+interface FlatItem extends ContentItemSummary {
+  fullPath: string[];
+}
 
 export default function SimpleHierarchy({ path = [] }: SimpleHierarchyProps) {
   const [tree, setTree] = useState<ExamGroupNode[]>([]);
@@ -52,7 +55,7 @@ export default function SimpleHierarchy({ path = [] }: SimpleHierarchyProps) {
     return <p className="explorer-empty">Not found.</p>;
   }
 
-  const items = flattenContent(node);
+  const items = flattenContent(node, path);
 
   return (
     <div className="simple-hierarchy">
@@ -76,7 +79,7 @@ export default function SimpleHierarchy({ path = [] }: SimpleHierarchyProps) {
               <span className={`badge ${item.access_level < 4 ? "badge-locked" : "badge-open"}`}>
                 {item.access_level < 4 ? `Tier ${item.access_level}+` : "Open"}
               </span>
-              <Link href={`/learn/${[...path, item.topic_id.split("/").pop() ?? item.id].join("/")}/${item.id}`} className="btn btn-primary btn-sm">
+              <Link href={`/learn/${item.fullPath.join("/")}`} className="btn btn-primary btn-sm">
                 Read notes
               </Link>
             </div>
@@ -105,23 +108,72 @@ function resolveNode(tree: ExamGroupNode[], path: string[]): Node | null {
   return node;
 }
 
-function flattenContent(node: Node): ContentItemSummary[] {
-  if ("content_items" in node) {
-    return node.content_items ?? [];
+function flattenContent(node: Node, basePath: string[]): FlatItem[] {
+  const items: FlatItem[] = [];
+
+  if ("content_items" in node && node.content_items) {
+    for (const ci of node.content_items) {
+      items.push({ ...ci, fullPath: [...basePath, ci.topic_id] });
+    }
   }
-  if ("topics" in node) {
-    return node.topics?.flatMap((t) => t.content_items ?? []) ?? [];
+
+  if ("topics" in node && node.topics) {
+    for (const topic of node.topics) {
+      const topicPath = [...basePath, topic.slug];
+      if (topic.content_items) {
+        for (const ci of topic.content_items) {
+          items.push({ ...ci, fullPath: [...topicPath, ci.id] });
+        }
+      }
+    }
   }
-  if ("sub_chapters" in node) {
-    return node.sub_chapters?.flatMap((sc) => sc.topics?.flatMap((t) => t.content_items ?? []) ?? []) ?? [];
+
+  if ("sub_chapters" in node && node.sub_chapters) {
+    for (const sub of node.sub_chapters) {
+      for (const topic of sub.topics ?? []) {
+        const topicPath = [...basePath, sub.slug, topic.slug];
+        if (topic.content_items) {
+          for (const ci of topic.content_items) {
+            items.push({ ...ci, fullPath: [...topicPath, ci.id] });
+          }
+        }
+      }
+    }
   }
-  if ("chapters" in node) {
-    return node.chapters?.flatMap((ch) => ch.sub_chapters?.flatMap((sc) => sc.topics?.flatMap((t) => t.content_items ?? []) ?? []) ?? []) ?? [];
+
+  if ("chapters" in node && node.chapters) {
+    for (const chapter of node.chapters) {
+      for (const sub of chapter.sub_chapters ?? []) {
+        for (const topic of sub.topics ?? []) {
+          const topicPath = [...basePath, chapter.slug, sub.slug, topic.slug];
+          if (topic.content_items) {
+            for (const ci of topic.content_items) {
+              items.push({ ...ci, fullPath: [...topicPath, ci.id] });
+            }
+          }
+        }
+      }
+    }
   }
-  if ("subjects" in node) {
-    return node.subjects?.flatMap((s) => s.chapters?.flatMap((ch) => ch.sub_chapters?.flatMap((sc) => sc.topics?.flatMap((t) => t.content_items ?? []) ?? []) ?? []) ?? []) ?? [];
+
+  if ("subjects" in node && node.subjects) {
+    for (const subject of node.subjects) {
+      for (const chapter of subject.chapters ?? []) {
+        for (const sub of chapter.sub_chapters ?? []) {
+          for (const topic of sub.topics ?? []) {
+            const topicPath = [...basePath, subject.slug, chapter.slug, sub.slug, topic.slug];
+            if (topic.content_items) {
+              for (const ci of topic.content_items) {
+                items.push({ ...ci, fullPath: [...topicPath, ci.id] });
+              }
+            }
+          }
+        }
+      }
+    }
   }
-  return [];
+
+  return items;
 }
 
 function Breadcrumb({ path }: { path: string[] }) {

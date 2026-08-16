@@ -7,6 +7,7 @@ interface VizPanelProps {
   children: ReactNode;
   defaultOpen?: boolean;
   testId?: string;
+  actions?: ReactNode;
 }
 
 /**
@@ -20,6 +21,7 @@ export default function VizPanel({
   children,
   defaultOpen = false,
   testId,
+  actions,
 }: VizPanelProps) {
   const [open, setOpen] = useState(defaultOpen);
 
@@ -33,6 +35,7 @@ export default function VizPanel({
       >
         <span className="viz-panel-caret">{open ? "▾" : "▸"}</span>
         {title}
+        {actions ? <span className="viz-panel-actions">{actions}</span> : null}
       </button>
       {open && <div className="viz-panel-body">{children}</div>}
     </div>

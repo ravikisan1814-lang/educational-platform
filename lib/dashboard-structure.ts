@@ -58,6 +58,17 @@ export const DASHBOARD_PILLARS: DashboardPillar[] = [
   },
 ];
 
+export const DASHBOARD_VIEWS = [
+  { id: "home", label: "Home", icon: "🏠" },
+  { id: "notes", label: "Notes", icon: "📝" },
+  { id: "syllabus", label: "Syllabus", icon: "📚" },
+  { id: "favorites", label: "Favorites", icon: "⭐" },
+  { id: "recent", label: "Recent", icon: "🕐" },
+  { id: "official", label: "Official", icon: "🎓" },
+] as const;
+
+export type DashboardViewId = (typeof DASHBOARD_VIEWS)[number]["id"];
+
 export function subjectLearnHref(examGroupSlug: string, subjectSlug: string): string {
   return `/learn/${examGroupSlug}/${subjectSlug}`;
 }

@@ -4,7 +4,7 @@
   "private": true,
   "description": "Educational content platform with tiered access control and AI generation.",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3007",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
