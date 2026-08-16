@@ -20,23 +20,33 @@ export default function ThreeScene({ className, figureType = "abstract", topicTi
   function createFigureGeometry(type: string, title?: string) {
     const slug = (title ?? type).toLowerCase();
 
-    if (type === "trajectory" || slug.includes("trajectory") || slug.includes("projectile") || slug.includes("graph")) {
-      return new THREE.TorusKnotGeometry(1, 0.28, 180, 20);
+    if (type === "trajectory") {
+      if (slug.includes("projectile")) return new THREE.TorusKnotGeometry(1, 0.28, 180, 20);
+      if (slug.includes("circular") || slug.includes("centripetal")) return new THREE.TorusGeometry(1, 0.35, 32, 120);
+      if (slug.includes("parabola") || slug.includes("conic")) return new THREE.TorusKnotGeometry(1, 0.32, 160, 24);
+      if (slug.includes("hyperboloid") || slug.includes("saddle")) return new THREE.TorusKnotGeometry(1, 0.3, 180, 20);
+      return new THREE.TorusKnotGeometry(1, 0.32, 160, 24);
     }
-    if (type === "molecular" || slug.includes("molecular") || slug.includes("molecule") || slug.includes("orbital")) {
+    if (type === "molecular") {
+      if (slug.includes("vsepr") || slug.includes("molecular geometry")) return new THREE.IcosahedronGeometry(1.1, 2);
+      if (slug.includes("crystal") || slug.includes("lattice")) return new THREE.BoxGeometry(1.2, 1.2, 1.2);
+      if (slug.includes("orbital") || slug.includes("atomic")) return new THREE.SphereGeometry(1.05, 32, 24);
       return new THREE.IcosahedronGeometry(1.1, 2);
     }
-    if (type === "barchart" || slug.includes("bar") || slug.includes("chart") || slug.includes("comparison")) {
+    if (type === "barchart") {
+      if (slug.includes("vector")) return new THREE.ConeGeometry(0.9, 1.6, 6, 1);
       return new THREE.BoxGeometry(0.35, 1, 0.35);
     }
-    if (type === "wave" || slug.includes("wave") || slug.includes("oscillation") || slug.includes("vibration")) {
+    if (type === "wave") {
+      if (slug.includes("superposition") || slug.includes("interference")) return new THREE.TorusGeometry(1, 0.35, 32, 120);
+      if (slug.includes("spiral") || slug.includes("helix")) return new THREE.TorusGeometry(1, 0.35, 32, 120);
       return new THREE.TorusGeometry(1, 0.35, 32, 120);
     }
-    if (type === "vectorfield" || slug.includes("field") || slug.includes("vector") || slug.includes("force")) {
+    if (type === "vectorfield") {
       return new THREE.ConeGeometry(0.9, 1.6, 6, 1);
     }
-    if (type === "cell" || slug.includes("cell") || slug.includes("biology") || slug.includes("life cycle")) {
-      return new THREE.SphereGeometry(1.05, 32, 24);
+    if (slug.includes("coordinate") || slug.includes("octant")) {
+      return new THREE.BoxGeometry(1.5, 1.5, 1.5);
     }
     return new THREE.TorusKnotGeometry(1, 0.32, 160, 24);
   }

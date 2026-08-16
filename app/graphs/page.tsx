@@ -13,28 +13,33 @@ const SUBJECTS = [
     slug: "physics",
     label: "Physics",
     figures: [
-      { key: "trajectory", label: "Trajectory / graph" },
-      { key: "vectorfield", label: "Vector field / force" },
-      { key: "wave", label: "Wave / oscillation" },
-      { key: "abstract", label: "Abstract" },
+      { key: "trajectory", label: "Projectile motion trajectory" },
+      { key: "trajectory", label: "Circular motion / centripetal acceleration" },
+      { key: "vectorfield", label: "Electric / magnetic field lines" },
+      { key: "wave", label: "Wave superposition / interference" },
+      { key: "abstract", label: "Simple harmonic motion" },
     ],
   },
   {
     slug: "chemistry",
     label: "Chemistry",
     figures: [
-      { key: "molecular", label: "Molecular / orbital" },
-      { key: "barchart", label: "Bar chart / comparison" },
-      { key: "abstract", label: "Abstract" },
+      { key: "molecular", label: "VSEPR molecular geometry" },
+      { key: "molecular", label: "Crystal lattice structure" },
+      { key: "molecular", label: "Atomic orbitals (s, p, d)" },
+      { key: "barchart", label: "Periodic trends / comparisons" },
+      { key: "abstract", label: "Chemical bonding model" },
     ],
   },
   {
     slug: "mathematics",
     label: "Mathematics",
     figures: [
-      { key: "trajectory", label: "Graph / plot" },
-      { key: "barchart", label: "Bar chart / comparison" },
-      { key: "abstract", label: "Abstract" },
+      { key: "trajectory", label: "3D parabola / conic surface" },
+      { key: "trajectory", label: "Hyperboloid / saddle surface" },
+      { key: "barchart", label: "Vector addition in 3D" },
+      { key: "wave", label: "Spiral / helix curve" },
+      { key: "abstract", label: "Coordinate axes and octants" },
     ],
   },
 ];
@@ -67,7 +72,6 @@ export default function GraphsPage() {
           </div>
         </section>
       </main>
-      <SiteFooter />
     </div>
   );
 }
