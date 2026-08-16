@@ -222,7 +222,7 @@ export default function ContentItemViewer({
           <JsonInspector data={detail} title="Note data — raw JSON" collapsed={2} />
         </VizPanel>
         <VizPanel
-          title={`3D figure: ${figureLabel} (${figureIndex + 1}/${figures.length})`}
+          title={`Graph / figure: ${figureLabel} (${figureIndex + 1}/${figures.length})`}
           actions={
             figures.length > 1 ? (
               <div className="fig-nav">
@@ -246,6 +246,7 @@ export default function ContentItemViewer({
               </div>
             ) : undefined
           }
+          defaultOpen={true}
         >
           <ThreeScene figureType={currentFigure} topicTitle={detail.title} />
         </VizPanel>

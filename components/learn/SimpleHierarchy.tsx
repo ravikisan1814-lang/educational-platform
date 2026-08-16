@@ -113,32 +113,31 @@ function flattenContent(node: Node, basePath: string[]): FlatItem[] {
 
   if ("content_items" in node && node.content_items) {
     for (const ci of node.content_items) {
-      items.push({ ...ci, fullPath: [...basePath, ci.topic_id] });
+      items.push({ ...ci, fullPath: [...basePath, ci.id] });
     }
+    return items;
   }
 
   if ("topics" in node && node.topics) {
     for (const topic of node.topics) {
       const topicPath = [...basePath, topic.slug];
-      if (topic.content_items) {
-        for (const ci of topic.content_items) {
-          items.push({ ...ci, fullPath: [...topicPath, ci.id] });
-        }
+      for (const ci of topic.content_items ?? []) {
+        items.push({ ...ci, fullPath: [...topicPath, ci.id] });
       }
     }
+    return items;
   }
 
   if ("sub_chapters" in node && node.sub_chapters) {
     for (const sub of node.sub_chapters) {
       for (const topic of sub.topics ?? []) {
         const topicPath = [...basePath, sub.slug, topic.slug];
-        if (topic.content_items) {
-          for (const ci of topic.content_items) {
-            items.push({ ...ci, fullPath: [...topicPath, ci.id] });
-          }
+        for (const ci of topic.content_items ?? []) {
+          items.push({ ...ci, fullPath: [...topicPath, ci.id] });
         }
       }
     }
+    return items;
   }
 
   if ("chapters" in node && node.chapters) {
@@ -146,14 +145,13 @@ function flattenContent(node: Node, basePath: string[]): FlatItem[] {
       for (const sub of chapter.sub_chapters ?? []) {
         for (const topic of sub.topics ?? []) {
           const topicPath = [...basePath, chapter.slug, sub.slug, topic.slug];
-          if (topic.content_items) {
-            for (const ci of topic.content_items) {
-              items.push({ ...ci, fullPath: [...topicPath, ci.id] });
-            }
+          for (const ci of topic.content_items ?? []) {
+            items.push({ ...ci, fullPath: [...topicPath, ci.id] });
           }
         }
       }
     }
+    return items;
   }
 
   if ("subjects" in node && node.subjects) {
@@ -162,15 +160,14 @@ function flattenContent(node: Node, basePath: string[]): FlatItem[] {
         for (const sub of chapter.sub_chapters ?? []) {
           for (const topic of sub.topics ?? []) {
             const topicPath = [...basePath, subject.slug, chapter.slug, sub.slug, topic.slug];
-            if (topic.content_items) {
-              for (const ci of topic.content_items) {
-                items.push({ ...ci, fullPath: [...topicPath, ci.id] });
-              }
+            for (const ci of topic.content_items ?? []) {
+              items.push({ ...ci, fullPath: [...topicPath, ci.id] });
             }
           }
         }
       }
     }
+    return items;
   }
 
   return items;
