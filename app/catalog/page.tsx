@@ -134,9 +134,9 @@ export default async function CatalogPage() {
           and unlock the full content library.
         </p>
         <div className="hero-actions">
-          <a href="mailto:ravikisan1814@gmail.com" className="btn btn-primary btn-lg">
+          <Link href="mailto:ravikisan1814@gmail.com" className="btn btn-primary btn-lg">
             Contact us
-          </a>
+          </Link>
           <Link href="/" className="btn btn-secondary btn-lg">
             Learn more
           </Link>
