@@ -8,27 +8,15 @@ import { createClient } from "@/lib/supabase/client";
 import { ACCESS_LEVEL_LABELS } from "@/lib/types";
 
 const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/learn", label: "Learn" },
-  { href: "/#contents", label: "Contents" },
-  { href: "/#upgrade", label: "Pricing" },
-  { href: "/#contact", label: "Contact" },
-  { href: "/info", label: "Information" },
+  { href: "/", label: "Home", icon: "🏠" },
+  { href: "/learn", label: "Learn", icon: "📚" },
+  { href: "/content", label: "Content", icon: "📖" },
+  { href: "/info", label: "Information", icon: "ℹ️" },
 ];
 
 function BellIcon() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
       <path d="M13.73 21a2 2 0 0 1-3.46 0" />
     </svg>
@@ -37,17 +25,7 @@ function BellIcon() {
 
 function BookmarkIcon() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
     </svg>
   );
@@ -55,17 +33,7 @@ function BookmarkIcon() {
 
 function ChevronDownIcon() {
   return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="m6 9 6 6 6-6" />
     </svg>
   );
@@ -74,35 +42,36 @@ function ChevronDownIcon() {
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [session, setSession] = useState<{ email: string; access_level: number } | null>(null);
+  const [session, setSession] = useState<{ email: string; access_level: number; full_name: string } | null>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
     try {
       const supabase = createClient();
-      supabase.auth.getSession().then(({ data }) => {
+      supabase.auth.getSession().then(async ({ data }) => {
         if (!cancelled && data.session?.user) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("access_level, full_name")
+            .eq("id", data.session.user.id)
+            .single();
           setSession({
             email: data.session.user.email ?? "",
-            access_level: 4,
+            access_level: profile?.access_level ?? 4,
+            full_name: profile?.full_name ?? "",
           });
         }
       });
     } catch {
-      // Env vars not configured — run in signed-out mode.
+      // Env vars not configured - run in signed-out mode
     }
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        profileRef.current &&
-        !profileRef.current.contains(event.target as Node)
-      ) {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
         setProfileOpen(false);
       }
     }
@@ -127,148 +96,82 @@ export default function SiteHeader() {
   return (
     <header className="site-header">
       <Link href="/" className="brand">
-        EduPlatform
+        <span className="brand-icon">🎓</span>
+        <span className="brand-text">EduPlatform</span>
       </Link>
-      <GlobalSearch />
-      <nav
-        id="site-nav"
-        aria-label="Primary"
-        className={`site-nav${open ? " site-nav-open" : ""}`}
-      >
+
+      <nav id="site-nav" aria-label="Primary" className={`site-nav${open ? " site-nav-open" : ""}`}>
         {NAV_LINKS.map((link) => (
           <Link key={link.href} href={link.href} className="nav-link">
-            {link.label}
+            <span className="nav-icon">{link.icon}</span>
+            <span className="nav-label">{link.label}</span>
           </Link>
         ))}
       </nav>
+
+      <GlobalSearch />
+
       <div className="header-actions">
         <ThemeToggle />
+
         {!session ? (
           <>
-            <button
-              type="button"
-              className="icon-btn"
-              aria-label="Notifications"
-              title="Notifications"
-            >
-              <BellIcon />
-              <span className="icon-badge" aria-hidden="true">
-                3
-              </span>
-            </button>
-            <button
-              type="button"
-              className="icon-btn"
-              aria-label="Saved items"
-              title="Saved"
-            >
-              <BookmarkIcon />
-            </button>
-            <Link href="/#upgrade" className="btn-upgrade">
-              Upgrade to Premium
+            <Link href="/login" className="btn btn-secondary btn-sm">
+              Sign In
             </Link>
-            <div className="profile-menu" ref={profileRef}>
-              <button
-                type="button"
-                className="profile-trigger"
-                aria-label="Profile menu"
-                aria-expanded={profileOpen}
-                onClick={() => setProfileOpen((value) => !value)}
-              >
-                <span className="avatar" aria-hidden="true">
-                  U
-                </span>
-                <ChevronDownIcon />
-              </button>
-              {profileOpen && (
-                <div className="profile-dropdown">
-                  <Link href="/#contact" onClick={() => setProfileOpen(false)}>
-                    Profile
-                  </Link>
-                  <Link href="/#contact" onClick={() => setProfileOpen(false)}>
-                    Settings
-                  </Link>
-                  <Link href="/#upgrade" onClick={() => setProfileOpen(false)}>
-                    Upgrade to Premium
-                  </Link>
-                  <Link href="/login" onClick={() => setProfileOpen(false)}>
-                    Sign in
-                  </Link>
-                </div>
-              )}
-            </div>
+            <Link href="/signup" className="btn btn-primary btn-sm">
+              Get Started
+            </Link>
           </>
         ) : (
           <>
-            <button
-              type="button"
-              className="icon-btn"
-              aria-label="Notifications"
-              title="Notifications"
-            >
-              <BellIcon />
-              <span className="icon-badge" aria-hidden="true">
-                3
-              </span>
-            </button>
-            <button
-              type="button"
-              className="icon-btn"
-              aria-label="Saved items"
-              title="Saved"
-            >
+            <button type="button" className="icon-btn" aria-label="Bookmarks" title="Bookmarks">
               <BookmarkIcon />
             </button>
-            <a
-              href="mailto:ravikisan1814@gmail.com"
-              className="btn-upgrade"
-              title="Contact owner for premium access"
-            >
-              Upgrade to Premium
-            </a>
+
             <div className="profile-menu" ref={profileRef}>
               <button
                 type="button"
                 className="profile-trigger"
                 aria-label="Profile menu"
                 aria-expanded={profileOpen}
-                onClick={() => setProfileOpen((value) => !value)}
+                onClick={() => setProfileOpen((v) => !v)}
               >
-                <span className="avatar" aria-hidden="true">
-                  {session.email?.[0]?.toUpperCase() ?? "U"}
-                </span>
-                <span style={{ fontSize: "0.85rem", fontWeight: 600 }}>{tierLabel}</span>
+                <span className="avatar">{session.full_name?.[0]?.toUpperCase() ?? session.email?.[0]?.toUpperCase() ?? "U"}</span>
+                <span className="profile-name">{session.full_name || session.email.split("@")[0]}</span>
                 <ChevronDownIcon />
               </button>
+
               {profileOpen && (
                 <div className="profile-dropdown">
-                  <div style={{ padding: "0.5rem 0.7rem", fontSize: "0.82rem", color: "var(--muted)" }}>
-                    {session.email}
+                  <div className="profile-header">
+                    <span className="profile-email">{session.email}</span>
+                    <span className="profile-tier">{tierLabel}</span>
                   </div>
                   {isOwner && (
                     <Link href="/admin" onClick={() => setProfileOpen(false)}>
-                      Member management
+                      Admin Panel
                     </Link>
                   )}
-                  <button
-                    type="button"
-                    className="profile-logout"
-                    onClick={handleSignOut}
-                  >
-                    Sign out
+                  <Link href="/bookmarks" onClick={() => setProfileOpen(false)}>
+                    My Bookmarks
+                  </Link>
+                  <button type="button" className="profile-logout" onClick={handleSignOut}>
+                    Sign Out
                   </button>
                 </div>
               )}
             </div>
           </>
         )}
+
         <button
           type="button"
           className="hamburger"
           aria-label="Toggle menu"
           aria-expanded={open}
           aria-controls="site-nav"
-          onClick={() => setOpen((value) => !value)}
+          onClick={() => setOpen((v) => !v)}
         >
           <span className="bar" />
           <span className="bar" />

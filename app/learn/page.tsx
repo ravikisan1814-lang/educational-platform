@@ -1,10 +1,9 @@
 import SiteHeader from "@/components/SiteHeader";
-import HierarchyExplorer from "@/components/learn/HierarchyExplorer";
+import TaxonomyExplorer from "@/components/TaxonomyExplorer";
 
 export const metadata = {
-  title: "Learn — Syllabus Explorer | EduPlatform",
-  description:
-    "Explore the full syllabus map: Loksewa, General Knowledge and Academic Core. Every cover is open — only the 90% in-content notes are tier-gated.",
+  title: "Learn - Taxonomy Explorer | EduPlatform",
+  description: "Explore the complete educational taxonomy from NEB to individual topics",
 };
 
 export default function LearnPage() {
@@ -13,16 +12,15 @@ export default function LearnPage() {
       <SiteHeader />
       <main>
         <section className="hero hero-premium">
-          <span className="hero-badge">Deep Learning Map</span>
-          <h1>Explore the syllabus freely</h1>
+          <span className="hero-badge">Taxonomy Explorer</span>
+          <h1>Structured Learning Path</h1>
           <p>
-            Exam Group → Subject → Chapter → Sub-Chapter → Topic. All titles,
-            cards and covers are open to everyone. Open any topic to read the
-            10% public concept — the 90% notes are tier-gated inside.
+            Navigate through our hierarchical knowledge system. From broad domains
+            down to specific species-level topics - every concept has its place.
           </p>
         </section>
         <section className="content-section">
-          <HierarchyExplorer />
+          <TaxonomyExplorer />
         </section>
       </main>
     </div>
