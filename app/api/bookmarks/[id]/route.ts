@@ -5,12 +5,16 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 /**
- * GET /api/bookmarks
+ * DELETE /api/bookmarks/:id
  */
-export async function GET(request: NextRequest) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const sb = getAdminClient();
     const authHeader = request.headers.get("authorization") ?? "";
+    const { id } = await params;
 
     if (!authHeader.startsWith("Bearer ")) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -22,14 +26,14 @@ export async function GET(request: NextRequest) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data, error } = await sb
+    const { error } = await sb
       .from("bookmarks")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
+      .delete()
+      .eq("id", id)
+      .eq("user_id", user.id);
 
     if (error) throw error;
-    return Response.json(data ?? []);
+    return Response.json({ success: true });
   } catch (e) {
     return Response.json(handleError(e), { status: 500 });
   }
