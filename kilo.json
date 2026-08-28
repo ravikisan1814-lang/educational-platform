@@ -1,0 +1,12 @@
+{
+  "name": "educational-platform",
+  "description": "Tiered-access educational content platform",
+  "agents": {
+    "default": "shared",
+    "available": ["cline", "opencode", "kilo", "vscode"]
+  },
+  "commands": {
+    "default": "shared",
+    "available": ["cline", "opencode", "kilo", "vscode"]
+  }
+}
