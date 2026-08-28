@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { TAXONOMY } from "@/lib/taxonomy";
-import type { TaxonomyNode } from "@/lib/taxonomy";
+import { EDUCATION_TAXONOMY } from "@/lib/taxonomy";
+import type { EducationNode } from "@/lib/taxonomy";
 
 export default function TaxonomyTree() {
-  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(["neb", "loksewa"]));
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(["class-11", "class-12"]));
 
   const toggleNode = (id: string) => {
     setExpandedNodes(prev => {
@@ -22,18 +22,18 @@ export default function TaxonomyTree() {
   return (
     <div className="taxonomy-tree-view">
       <h2>Interactive Taxonomy Tree</h2>
-      <TreeNodes nodes={TAXONOMY} expandedNodes={expandedNodes} onToggle={toggleNode} depth={0} />
+      <TreeNodes nodes={EDUCATION_TAXONOMY} expandedNodes={expandedNodes} onToggle={toggleNode} depth={0} />
     </div>
   );
 }
 
-function TreeNodes({ 
-  nodes, 
-  expandedNodes, 
-  onToggle, 
-  depth 
-}: { 
-  nodes: TaxonomyNode[]; 
+function TreeNodes({
+  nodes,
+  expandedNodes,
+  onToggle,
+  depth
+}: {
+  nodes: EducationNode[];
   expandedNodes: Set<string>;
   onToggle: (id: string) => void;
   depth: number;
@@ -43,11 +43,11 @@ function TreeNodes({
       {nodes.map((node) => {
         const isExpanded = expandedNodes.has(node.id);
         const hasChildren = node.children && node.children.length > 0;
-        
+
         return (
           <li key={node.id} className="tree-view-item">
             <div className="tree-node-header">
-              <button 
+              <button
                 className="toggle-btn"
                 onClick={() => hasChildren && onToggle(node.id)}
                 disabled={!hasChildren}
@@ -61,11 +61,11 @@ function TreeNodes({
             </div>
             {hasChildren && isExpanded && (
               <ul className="tree-children">
-                <TreeNodes 
-                  nodes={node.children!} 
-                  expandedNodes={expandedNodes} 
-                  onToggle={onToggle} 
-                  depth={depth + 1} 
+                <TreeNodes
+                  nodes={node.children!}
+                  expandedNodes={expandedNodes}
+                  onToggle={onToggle}
+                  depth={depth + 1}
                 />
               </ul>
             )}
@@ -78,14 +78,14 @@ function TreeNodes({
 
 function getNodeIcon(tier: string): string {
   const icons: Record<string, string> = {
-    "Domain": "🌍",
-    "Kingdom": "👑",
-    "Phylum": "🔬",
-    "Class": "📊",
-    "Order": "📋",
-    "Family": "👨‍👩‍👧‍👦",
-    "Genus": "🏷️",
-    "Species": "🌱",
+    "Class": "📚",
+    "Subject": "📖",
+    "Chapter": "📋",
+    "SubChapter": "📌",
+    "CoreConcept": "💡",
+    "LearningAsset": "📝",
+    "PracticalApp": "🔧",
+    "Assessment": "✅",
   };
   return icons[tier] || "•";
 }

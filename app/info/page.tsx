@@ -1,6 +1,6 @@
 import SiteHeader from "@/components/SiteHeader";
 import TaxonomyTree from "@/components/TaxonomyTree";
-import { TAXONOMY, toTreeString } from "@/lib/taxonomy";
+import { EDUCATION_TAXONOMY, toTreeString } from "@/lib/taxonomy";
 
 export const metadata = {
   title: "Information - Taxonomy Overview | EduPlatform",
@@ -70,7 +70,7 @@ export default function InfoPage() {
         <section className="content-section">
           <h2>Visual Taxonomy Tree</h2>
           <div className="tree-container">
-            <pre className="tree-text">{toTreeString(TAXONOMY)}</pre>
+            <pre className="tree-text">{toTreeString(EDUCATION_TAXONOMY)}</pre>
           </div>
         </section>
         <section className="content-section">

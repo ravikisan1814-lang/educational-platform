@@ -1,25 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { TAXONOMY, findNodeBySlug, flattenTaxonomy } from "@/lib/taxonomy";
-import type { TaxonomyNode, FlattenedNode } from "@/lib/taxonomy";
+import { EDUCATION_TAXONOMY, findNodeBySlug, flattenTaxonomy } from "@/lib/taxonomy";
+import type { EducationNode, FlattenedNode } from "@/lib/taxonomy";
 
 export default function ContentBrowser() {
   const [selectedLevel, setSelectedLevel] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const allNodes = flattenTaxonomy(TAXONOMY);
+  const allNodes = flattenTaxonomy(EDUCATION_TAXONOMY);
   const leafNodes = allNodes.filter(n => n.depth >= 5);
 
   const filteredNodes = leafNodes.filter(node => {
     const matchesLevel = selectedLevel === "all" || node.tier === selectedLevel;
-    const matchesSearch = !searchTerm || 
+    const matchesSearch = !searchTerm ||
       node.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       node.slug.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesLevel && matchesSearch;
   });
 
-  const levels = ["all", "Domain", "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"];
+  const levels = ["all", "Class", "Subject", "Chapter", "SubChapter", "CoreConcept", "LearningAsset", "PracticalApp", "Assessment"];
 
   return (
     <div className="content-browser">
@@ -31,8 +31,8 @@ export default function ContentBrowser() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
         />
-        <select 
-          value={selectedLevel} 
+        <select
+          value={selectedLevel}
           onChange={(e) => setSelectedLevel(e.target.value)}
           className="level-select"
         >

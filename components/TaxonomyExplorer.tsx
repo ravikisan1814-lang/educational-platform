@@ -1,23 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { TAXONOMY, findNodeBySlug, getLeafNodes } from "@/lib/taxonomy";
-import type { TaxonomyNode } from "@/lib/taxonomy";
+import { EDUCATION_TAXONOMY, findNodeBySlug, getLeafNodes } from "@/lib/taxonomy";
+import type { EducationNode } from "@/lib/taxonomy";
 
 export default function TaxonomyExplorer() {
-  const [selectedNode, setSelectedNode] = useState<TaxonomyNode | null>(null);
+  const [selectedNode, setSelectedNode] = useState<EducationNode | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleNodeClick = (node: TaxonomyNode) => {
+  const handleNodeClick = (node: EducationNode) => {
     setSelectedNode(node);
   };
 
   const filteredNodes = searchTerm
-    ? TAXONOMY.filter(n => 
+    ? EDUCATION_TAXONOMY.filter(n =>
         n.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         n.slug.toLowerCase().includes(searchTerm.toLowerCase())
       )
-    : TAXONOMY;
+    : EDUCATION_TAXONOMY;
 
   return (
     <div className="taxonomy-explorer">
@@ -55,11 +55,16 @@ export default function TaxonomyExplorer() {
                 <strong>Slug:</strong> <code>{selectedNode.slug}</code>
               </div>
               <div className="meta-item">
-                <strong>Depth:</strong> {selectedNode.tier} level
+                <strong>Tier:</strong> {selectedNode.tier}
               </div>
               {selectedNode.children && selectedNode.children.length > 0 && (
                 <div className="meta-item">
                   <strong>Children:</strong> {selectedNode.children.length}
+                </div>
+              )}
+              {selectedNode.content && (
+                <div className="meta-item">
+                  <strong>Has Content:</strong> Yes
                 </div>
               )}
             </div>
@@ -78,13 +83,13 @@ export default function TaxonomyExplorer() {
   );
 }
 
-function TreeNodes({ 
-  nodes, 
-  onSelect, 
-  selectedId 
-}: { 
-  nodes: TaxonomyNode[]; 
-  onSelect: (node: TaxonomyNode) => void;
+function TreeNodes({
+  nodes,
+  onSelect,
+  selectedId
+}: {
+  nodes: EducationNode[];
+  onSelect: (node: EducationNode) => void;
   selectedId?: string;
 }) {
   return (
@@ -97,6 +102,7 @@ function TreeNodes({
           >
             <span className="node-icon">{getNodeIcon(node.tier)}</span>
             <span className="node-name">{node.name}</span>
+            <span className="node-tier">{node.tier}</span>
             {node.children && node.children.length > 0 && (
               <span className="node-count">{node.children.length}</span>
             )}
@@ -114,14 +120,14 @@ function TreeNodes({
 
 function getNodeIcon(tier: string): string {
   const icons: Record<string, string> = {
-    "Domain": "🌍",
-    "Kingdom": "👑",
-    "Phylum": "🔬",
-    "Class": "📊",
-    "Order": "📋",
-    "Family": "👨‍👩‍👧‍👦",
-    "Genus": "🏷️",
-    "Species": "🌱",
+    "Class": "📚",
+    "Subject": "📖",
+    "Chapter": "📋",
+    "SubChapter": "📌",
+    "CoreConcept": "💡",
+    "LearningAsset": "📝",
+    "PracticalApp": "🔧",
+    "Assessment": "✅",
   };
   return icons[tier] || "•";
 }
